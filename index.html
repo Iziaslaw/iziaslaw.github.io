@@ -1,26 +1,177 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Tetris</title>
-        <style>
-            body {
-                background: #202028;
-                color: #fff;
-                font-family: sans-serif;
-                font-size: 2em;
-                text-align: center;
-            }
-            canvas {
-                border: solid .2em #fff;
-                height: 90vh;
-            }
-        </style> 
-    </head>
-    <body>
-        <div id="score"></div>
-        <canvas id="tetris" width="240" height="400"></canvas>
-        <script src="game.js"></script>
+<head>
+    <meta charset="utf-8" />
+<!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0 , user-scalable=no, maximum-scale=1.0">
+-->
+<!--    <meta name="viewport" content="width=device-width,user-scalable=no" />-->
+    <title>PONG</title>
+    
+    <script type="text/javascript" src="phaser.min.2.7.10.js"></script>
+    
+</head>
+<body>
+    <script type="text/javascript">
+    
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update});
         
-    </body>
+var paddle1, paddle2; 
+var ball, ball_launched, ball_velocity;
+var score1, score2;        
+        
+function preload() {
+    game.load.image('paddle', 'pong.png');
+    game.load.spritesheet('ball', 'pong.png', 10,10);
+    
+    game.load.bitmapFont('font', 'desyrel.png', 'desyrel.xml');
+    
+    game.load.audio('hit_1', ['hit_1.ogg', 'hit_1.wav']);
+    game.load.audio('hit_2', ['hit_2.ogg', 'hit_2.wav']);
+}        
+    
+function create() {
+    ball_launched = false;
+    ball_velocity = 400;
+    
+    paddle1 = create_paddle(5, game.world.centerY);
+    paddle2 = create_paddle(game.world.width - 5, game.world.centerY);
+    
+    ball = create_ball(game.world.centerX, game.world.centerY);
+    
+    game.input.onDown.add(launch_ball, this);
+    
+//    score1_text = game.add.text(128,128, '0',{font: "64px Gabriella", fill: "#ffffff", align: "center"
+// });
+//    score2_text = game.add.text(game.world.width - 128, 128, '0',{font: "64px Gabriella", fill: "#ffffff", align: "center"
+// });
+    
+    score1_text = game.add.bitmapText(128,128, 'font', '0', 64);
+    score2_text = game.add.bitmapText(game.world.width - 128, 128, 'font','0', 64);
+    
+    score1 = 0;
+    score2 = 0;
+    
+}   
+        
+function update() {
+    score1_text.text = score1;
+    score2_text.text = score2;
+    
+    control_paddle(paddle1,game.input.y);
+   game.physics.arcade.collide(paddle1,ball, function(){game.sound.play('hit_1')});
+   game.physics.arcade.collide(paddle2,ball, function(){game.sound.play('hit_2')});
+    
+    if(ball.body.blocked.left){
+        score2 += 1;
+    }if(ball.body.blocked.right){
+        score1 += 1;
+    }
+    
+    paddle2.body.velocity.setTo(ball.body.velocity.y);
+    paddle2.body.velocity.x = 0;
+    paddle2.body.maxVelocity.y =250;
+}   
+        
+function create_paddle(x,y) {
+    var paddle = game.add.sprite(x,y,'paddle');
+    paddle.anchor.setTo(0.5,0.5);
+    game.physics.arcade.enable(paddle);
+    paddle.body.collideWorldBounds = true;
+    paddle.body.immovable = true;
+    //paddle.scale.setTo(0.5,0.5);
+    
+    return paddle;
+}    
+        
+function control_paddle(paddle,y) {
+    paddle.y = y;
+    
+    if(paddle.y < paddle.height / 2){
+        paddle.y = paddle.height /2;
+    }else if (paddle.y > game.world.height - paddle.height / 2){
+        paddle.y = game.world.height - paddle.height / 2;
+    }
+}        
+        
+function create_ball(x,y){
+    var ball = game.add.sprite(x,y,'ball');
+    ball.anchor.setTo(0.5,0.5);
+    game.physics.arcade.enable(ball);
+    ball.body.collideWorldBounds = true;
+    ball.body.bounce.setTo(1,1);
+    
+    return ball;
+}        
+        
+function launch_ball(){
+    if(ball_launched){
+        ball.x = game.world.centerX;
+        ball.y = game.world.centerY;
+        ball.body.velocity.setTo(0,0);
+        ball_launched = false;
+    }else {
+        ball.body.velocity.x = -ball_velocity;
+        ball.body.velocity.y = ball_velocity;
+        ball_launched = true;
+    }
+}        
+    </script>
+    <div><script LANGUAGE="JavaScript">
+ 
 
-</html>
+ 
+<!-- Begin
+var h=0,e=0,n=0,m=0;
+var hChose="", eChose=":", nChose="-", mChose=")";
+document.write("<FORM NAME=\"theForm\"><CENTER>"
++ "<input type=text size=20 name=face>"
++"<BR><input type=button value=Hair onClick='changeHair()'>"
++"<input type=button value=Eyes onClick='changeEyes()'>"
++"<input type=button value=Nose onClick='changeNose()'>"
++"<input type=button value=Mouth onClick='changeMouth()'>  ");
+document.write("<input type=button value=View onClick='viewIt()'>");
+document.write("</CENTER></FORM>");
+document.theForm.face.value=hChose+" "+eChose+" "+nChose+mChose;
+hair=new Array("","[[[","2","3","(","\\/\\/","З");
+eyes=new Array("B",":\'",">:","<:",":",";","¦");
+nose=new Array("- ","^ ","* ","~ ","¤ ","");
+mouth=new Array("Ю","O","}","|",")","(",")~~",")===");
+function changeHair() {
+if (h == 6) {h=0} else (h++)
+hChose = hair[h];
+document.theForm.face.value=hChose+" "+eChose+" "+nChose+mChose;
+}
+function changeEyes() {
+if (e == 6) {e=0} else (e++)
+eChose = eyes[e];
+document.theForm.face.value=hChose+" "+eChose+" "+nChose+mChose;
+}
+function changeNose() {
+if (n == 5) {n=0} else (n++)
+nChose = nose[n];
+document.theForm.face.value=hChose+" "+eChose+" "+nChose+mChose;
+}
+function changeMouth() {
+if (m == 7) {m=0} else (m++)
+mChose = mouth[m];
+document.theForm.face.value=hChose+" "+eChose+" "+nChose+mChose;
+}
+function viewIt() {
+mth="";
+for (i=1;i<=mChose.length;i++) {mth += mChose.charAt(i)}
+see=window.open('','','width=200,height=175,toolbar=no,status=no,scrolling=no');
+see.document.write("<HTML><HEAD><TITLE>Mr. Potato Head</TITLE></HEAD><BODY>"
++ "<CENTER><FONT SIZE=7><B>"+hChose+" <FONT COLOR=blue>"
++ eChose + " </FONT>" + nChose + " <FONT COLOR=red>" 
++ mChose.charAt(0) + "</FONT>" + mth + "</B></FONT><br><br>"
++ "<FONT SIZE=2><I>Mr. Potato Head!</I></FONT><br>"
++ "<FONT SIZE=1>(<a href=\"javascript:this.close()\">"
++ "close</a>)</FONT></CENTER></BODY></HTML>");
+}
+// End -->
+        </script></div>
+    
+</body>
+</html>   
