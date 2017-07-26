@@ -1,30 +1,3 @@
-<html>
-
-<head>  
-    <title>Spin_fin</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <script type="text/javascript" src="http://izin.club/lib/phaser.min.2.7.10.js"></script>
-<!--    <script type="text/javascript" src="js/main.js"></script>-->
-</head>
-<style>
-            body {
-                background: #aabbcc;
-                margin: 0;
-                padding: 0;
-            }
-    #gameDiv{
-        cursor: crosshair;
-    }
-</style>
-<body>
-    <div id="gameDiv" >
-    <script type="text/javascript">
-    
-
-
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, 'gameDiv', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
@@ -595,9 +568,3 @@ function restart () {
     stateText.visible = false;
 
 }
-
-    </script>
-    
-    </div>
-</body>  
-</html>  
