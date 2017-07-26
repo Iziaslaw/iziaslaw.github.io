@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1280, 720, Phaser.AUTO, 'gameDiv', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(1000, 620, Phaser.AUTO, 'gameDiv', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
 
@@ -45,8 +45,8 @@ var livingEnemies = [];
    
 var aliGlass;
         
-var pX = 600;
-var pY = 650;        
+var pX = 500;
+var pY = 570;        
 var tween1;  
 var logo;        
 var logS = false;        
@@ -68,7 +68,7 @@ function create() {
     starfield = game.add.sprite(0, 0, 'starfield');
     starfield.name = starfield;
 
-    logo = game.add.sprite(640, 350, 'logo');
+    logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     logo.anchor.setTo(0.5);
     logo.scale.setTo(0.01);
     game.add.tween(logo.scale).to( { x: 1, y: 1 }, 10000, Phaser.Easing.Linear.None, true, 1, 1000, true);
@@ -91,6 +91,8 @@ function create() {
     bullets.createMultiple(30, 'bullet');
     //bullets.setAll.bulletAngleOffset = 90;
     //bullets.scale.setTo(0.1);
+    bullets.setAll('scale.x', 0.6);
+    bullets.setAll('scale.y', 0.6);
     bullets.setAll('anchor.x', 0.5);
     bullets.setAll('anchor.y', 1);
     bullets.setAll('outOfBoundsKill', true);
@@ -101,8 +103,8 @@ function create() {
     bullets2.physicsBodyType = Phaser.Physics.ARCADE;
     bullets2.createMultiple(30, 'glass');
     //bullets2.setAll.bulletAngleOffset = 90;
-    bullets2.setAll('scale.x', 0.1);
-    bullets2.setAll('scale.y', 0.1);
+    bullets2.setAll('scale.x', 0.06);
+    bullets2.setAll('scale.y', 0.06);
     bullets2.setAll('anchor.x', 0.5);
     bullets2.setAll('anchor.y', 1);
     bullets2.setAll('outOfBoundsKill', true);
@@ -163,15 +165,15 @@ function createPlayer() {
     //  The hero!
     car = game.add.sprite(pX,pY, 'car');
     car.anchor.set(0.5);
-    //car.scale.setTo(0.5);
+    car.scale.setTo(0.6);
     
     glass = game.add.sprite(pX,pY, 'glass');
     glass.anchor.setTo(0.5);
-    glass.scale.setTo(0.18);
+    glass.scale.setTo(0.12);
     
     player = game.add.sprite(pX, pY, 'ship');
     player.anchor.setTo(0.5, 0.5);
-    //player.scale.setTo(0.5);
+    player.scale.setTo(0.6);
     player.angle = -90;
     game.physics.enable(player, Phaser.Physics.ARCADE);
     
@@ -183,7 +185,7 @@ function createAliens () {
     {
         for (var x = 0; x < lK; x++)
         {
-            var alien = aliens.create(x * 65 + 100, y * 65 + 30, 'invader',game.rnd.integerInRange(0, 7));
+            var alien = aliens.create(x * 65 + 50, y * 65 + 10, 'invader',game.rnd.integerInRange(0, 7));
             alien.anchor.setTo(0.5, 0.5);
             alien.scale.set(0.5);
             //alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
@@ -215,24 +217,24 @@ function createAliens () {
     function createScore() {
         //  The score
     scoreString = 'Уничтожено: ';
-    scoreText = game.add.text(10, 0, scoreString + score, { font: '34px Arial', fill: '#d81d1d' });
+    scoreText = game.add.text(10, 0, scoreString + score, { font: '30px Arial', fill: '#d81d1d' });
     scoreText.stroke = "#94ce5a";
     scoreText.strokeThickness = 2;
     scoreText.setShadow(2, 2, "#4ee866", 2, false, false);
 
     scoreStringS = 'Остановленных: ';
-    scoreTextS = game.add.text(300, 0, scoreStringS + scoreS, { font: '34px Arial', fill: '#080000' });
+    scoreTextS = game.add.text(300, 0, scoreStringS + scoreS, { font: '30px Arial', fill: '#080000' });
     scoreTextS.stroke = "#94ce5a";
     scoreTextS.strokeThickness = 2;
     scoreTextS.setShadow(2, 2, "#4ee866", 2, false, false);
     //  Lives
     lives = game.add.group();
-    livesS = game.add.text(game.world.width - 400, 0, 'Попыток: ', { font: '34px Arial', fill: '#078383' });
+    livesS = game.add.text(game.world.width - 350, 0, 'Попыток: ', { font: '30px Arial', fill: '#078383' });
     livesS.stroke = "#b9d960";
     livesS.strokeThickness = 2;
     livesS.setShadow(2, 2, "#4ee866", 2, false, false);           
     //  Text
-    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '70px Arial Black', fill: 'rgba(6, 27, 42, 0.84)' });
+    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '50px Arial Black', fill: 'rgba(6, 27, 42, 0.84)' });
     stateText.anchor.setTo(0.5, 0.5);
     stateText.visible = false;
     stateText.stroke = "rgba(135, 203, 67, 0.83)";
@@ -242,7 +244,7 @@ function createAliens () {
 
     for (var i = 0; i < 3; i++) 
     {
-        var ship = lives.create(game.world.width - 210 + (50 * i), 25, 'car',10);
+        var ship = lives.create(game.world.width - 160 + (50 * i), 25, 'car',10);
         ship.anchor.setTo(0.5, 0.5);
         //ship.angle = 90;
         ship.alpha = 0.5;
@@ -446,6 +448,7 @@ lSpeed = 125;
         stateText.visible = true;
         
         music.stop();
+        car.frame = 34;
         
         score = 0;//сброс очков
         scoreS = 0;
