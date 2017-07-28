@@ -18,8 +18,31 @@ function preload() {
 }
 
 function create() {
-
     game.stage.backgroundColor = '#2d2d2d';
+    var pixelWidth = 6;
+    var pixelHeight = 6;
+
+    var chick = [
+        '...55.......',
+        '.....5......',
+        '...7888887..',
+        '..788888887.',
+        '..888088808.',
+        '..888886666.',
+        '..8888644444',
+        '..8888645555',
+        '888888644444',
+        '88788776555.',
+        '78788788876.',
+        '56655677776.',
+        '456777777654',
+        '.4........4.'
+    ];
+
+    game.create.texture('chick', chick, pixelWidth, pixelHeight);
+    game.add.sprite(150, 200, 'chick').anchor.y = 1;
+    
+
 
     //  Creates a blank tilemap
     map = game.add.tilemap();

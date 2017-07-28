@@ -14,6 +14,7 @@ var totalBeat = 0;
 var totalBass = 0;
     var fW = 16;
     var fH = 16;
+var cursor;var cursorTw;
 
 function preload() {
 
@@ -24,7 +25,7 @@ function preload() {
     //game.load.audio('org', 'audio/church_organ04_c3_b5.ogg');
     //game.load.audio('flu', 'audio/flute_c3_b5.ogg');
     game.load.audio('piano', 'https://iziaslaw.github.io/games/soundgame/audio/piano_c3-c5.mp3');
-    game.load.audio('beat', 'audio/beat_fl1.wav');
+    game.load.audio('beat', 'audio/beat_fl_2.mp3');
     //game.load.audio('bass', 'audio/choir_ooh_fl.wav');
     //game.load.image('flame', 'image/flame_camin.png');
     //game.load.spritesheet('rain', 'assets/sprites/rain.png', 17, 17);
@@ -76,25 +77,53 @@ var sounds = ['c301','c302','c303','c304','c305','c306','c307','c308','c309','c3
 function create() {
 game.stage.backgroundColor = '#58225a'; 
     
-    var out = [];
+var board = [
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD', 
+        'F1F1',
+        'F1F1',
+        'ADAD',
+        'F1F1',
+        'ADAD',
+        'F1F1'        
 
-    var bmd = game.add.bitmapData(1280, 720);
-    bmd.addToWorld();
+    ];
 
-    var y = 0;
-
-    for (var i = 0; i < 60; i++)
-    {
-        var c = Phaser.Color.interpolateColor(0x6c1e6f, 0x2e0a2e, 60, i);
-
-        // console.log(Phaser.Color.getWebRGB(c));
-
-        bmd.rect(0, y, 1280, y+6, Phaser.Color.getWebRGB(c));
-
-        out.push(Phaser.Color.getWebRGB(c));
-
-        y += 6;
-    }
+    game.create.texture('board', board, fW * 16, fH);
+    game.add.sprite(fW, fH, 'board');//.anchor.y = 1;
+        
+    var cursorMap = ['3'];
+    game.create.texture('cursor', cursorMap, fW , fH);
+    cursor = game.add.sprite(fW, fH * 37, 'cursor');
+    
     
 button1 = game.add.button(0, 720, 'button', but1, this, 0, 1, 2);
     button1.name = 'pic2';
@@ -306,7 +335,6 @@ function createArray() {
         lineOk = game.add.graphics(fW,fH);
         note   = game.add.graphics(fW,fH);
         note1  = game.add.graphics(fW,fH);
-        
                     
         for (var y = 0; y < 19; y++)
     {
@@ -336,7 +364,7 @@ function createArray() {
                  }else {
             note.lineStyle(2, 0x28582e, 1);         
             note.beginFill(0xFF700B, 1);         
-            note.drawRect(noteX , fH * 36 - arH[i] * fH, 0.008 * arPS[i] * fW , fH);
+            note.drawRect(noteX , fH * 35 - arH[i] * fH, 0.008 * arPS[i] * fW , fH);
             note.lineStyle(1, 0xe26c23, 1);
                      
         var textNote = game.add.text(noteX + 51, 598 - arH[i] * 15 , arPP[i], { font: "10px Arial", fill: "#0a2f84", align: "center" });
@@ -356,6 +384,8 @@ function dropPiano1 () {
     
     pianoAll.play(arPP[pN]);
     pianoAll.volume = 0.2;
+    cursor.x = cursor.x + 0.008 * arPS[pS - 1] * fW;
+    cursor.y = fH * 35 - arH[pN] * fH;
     
 //    emitter = game.add.emitter(50 + arH[pN] * 36, 580 , 250);//(game.world.centerX,game.world.centerY, 200);//(0 + (pp *2), 300 + pp, 250);
 //
@@ -409,6 +439,7 @@ function dropBeat() {
         arPS.length = 0;
         pN = 0;
         pS = 0;
+        play = false;
     }
     function but2() {
         if(arPP.length === 0) {
@@ -540,6 +571,16 @@ function dropBeat() {
     }
     
 function update() {
+//    if (play && cursor.x <= fW * 32 * longN) {
+//        //cursor.x += 0.008 * arPS[pS] * fW;//0.008 * arPS[pN] * fW * pN;
+//        cursor.y = fH * 37;
+//    }else {
+//    };
+    if(pN === 0) {
+        cursor.x = fW;
+        //cursor.y = fH * 37;
+        
+    }
 
     tb7.text = long;
     tb5.text = soundName1;
