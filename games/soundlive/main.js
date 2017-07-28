@@ -12,7 +12,8 @@ var total2 = 0;
 var totalBeat = 0;
     var timerBass = 0;
 var totalBass = 0;
-    
+    var fW = 16;
+    var fH = 16;
 
 function preload() {
 
@@ -300,47 +301,48 @@ function createArray() {
         }
     }
     function createNote() {
-        lineX = game.add.graphics(25,40);
-        lineY = game.add.graphics(25,40);
-        lineOk = game.add.graphics(25,40);
-        note = game.add.graphics(25,40);
-        note1 = game.add.graphics(25,40);
+        lineX  = game.add.graphics(fW,fH);
+        lineY  = game.add.graphics(fW,fH);
+        lineOk = game.add.graphics(fW,fH);
+        note   = game.add.graphics(fW,fH);
+        note1  = game.add.graphics(fW,fH);
         
                     
         for (var y = 0; y < 19; y++)
     {
         lineX.lineStyle(1, 0x56a71c, 1);
-        lineX.moveTo(0, 0 + 30 * y);  
-        lineX.lineTo(1216, 0 + 30 * y);
+        lineX.moveTo(0, fH * 2 * y);  
+        lineX.lineTo(fW * 64, fH * 2 * y);
     }
         for (var x = 0; x < 65; x++)
         {
             lineY.lineStyle(1, 0x56a71c, 1);
-            lineY.moveTo(0 + 19 * x, 0 );  
-            lineY.lineTo(0 + 19 * x, 540); 
+            lineY.moveTo(0 + fW * x, 0 );  
+            lineY.lineTo(0 + fW * x, fH * 36); 
         }
         for (var ok = 0; ok < 4; ok++)
         {
             lineOk.lineStyle(3, 0xebd1c0, 1);
-            lineOk.moveTo(0, 15 + 180 * ok );  
-            lineOk.lineTo(1216, 15 + 180 * ok); 
+            lineOk.moveTo(0, fH * 12 * ok );  
+            lineOk.lineTo( fW * 64, fH * 12 * ok); 
         }
             noteX = 0;
             start1 = true;
         for (var i = 0; i<arPP.length;i++) {
             if(arH[i] === 36) {
             //note1.beginFill(0xbfb7b2, 1);                
-            note1.lineStyle(1, 0xb9b6b5, 1);
+            note1.lineStyle(2, 0x041506, 1);
             note1.drawRect(noteX + 10, 540 - 390 , arPS[i] * 0.152 - 10, 240);
                  }else {
+            note.lineStyle(2, 0x28582e, 1);         
             note.beginFill(0xFF700B, 1);         
-            note.drawRect(noteX + 1, 540 - arH[i] * 15, arPS[i] * 0.152 - 2, 30);
+            note.drawRect(noteX , fH * 36 - arH[i] * fH, 0.008 * arPS[i] * fW , fH);
             note.lineStyle(1, 0xe26c23, 1);
                      
         var textNote = game.add.text(noteX + 51, 598 - arH[i] * 15 , arPP[i], { font: "10px Arial", fill: "#0a2f84", align: "center" });
         textNoteN += 1;             
                  }
-            noteX += arPS[i] * 0.152;
+            noteX += 0.008 * arPS[i] * fW;
         }
         
     }
