@@ -367,7 +367,7 @@ function createArray() {
             note.drawRect(noteX , fH * 35 - arH[i] * fH, 0.008 * arPS[i] * fW , fH);
             note.lineStyle(1, 0xe26c23, 1);
                      
-        var textNote = game.add.text(noteX + 51, 598 - arH[i] * 15 , arPP[i], { font: "10px Arial", fill: "#0a2f84", align: "center" });
+        //var textNote = game.add.text(noteX + 51, 598 - arH[i] * 15 , arPP[i], { font: "10px Arial", fill: "#0a2f84", align: "center" });
         textNoteN += 1;             
                  }
             noteX += 0.008 * arPS[i] * fW;
