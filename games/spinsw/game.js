@@ -57,6 +57,7 @@ var lSpeed = 125;
 //var aliGlas, alien;        
 
 document.body.oncontextmenu = function() { fireBullet2 (); return false; };
+//z.addEventListener("mousemove",function(){});
 
 function create() {
     
