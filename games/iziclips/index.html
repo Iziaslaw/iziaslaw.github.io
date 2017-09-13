@@ -1,0 +1,217 @@
+<html>
+
+<head>  
+    <title>cur1</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script type="text/javascript" src="https://iziaslaw.github.io/lib/phaser.min.2.7.10.js"></script>
+<!--    <script type="text/javascript" src="js/main.js"></script>-->
+</head>
+<style>
+            body {
+                background: #aabbcc;
+                margin: 0;
+                padding: 0;
+            }
+    #gameDiv{
+        cursor: crosshair;
+    }
+</style>
+<body>
+    <div id="gameDiv">
+    <script type="text/javascript">
+    
+        
+
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { create: create, update: update });
+
+var mandala = ['79......87987987'];//["C6FD97EF4123", "78EA0C0ADD7D", "7B520F4F5AAF", "35D9C0316896", "B93407F93990", "5E9B3C9BE065", "988200E96C8D", "0B61FC3CE89D", "F09EF84A0CA3", "D641B6216D53", "FD02FC39EAEB", "8D77959D3C0A"];
+var mandala1 = [];        
+var colorString = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','.'];
+        
+function create() {
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    game.stage.backgroundColor = '#2d2d2d';
+
+    //  These sprites were created with the Phaser Gen Paint app
+    //  also available in the Phaser Examples repo and on the Phaser site.
+
+    var endData = [
+        '2222'
+    ];
+
+    game.create.texture('endTexture', endData, 1, 1, 1);
+
+    var ratData = [
+        '.D...........',
+        '18...........',
+        '1D...........',
+        '18.....1111..',
+        '1D..111DDEE1.',
+        '1811EEE18E0E1',
+        '.1DEEEEEEEEED',
+        '..1EEEEEE41..',
+        '.11E41E1411..',
+        '1111E1E1E111.',
+        '.1111111111..'
+    ];
+
+    game.create.texture('ratTexture', ratData, 4, 4, 4);
+
+    var dudeData = [
+        '.......3.....',
+        '......333....',
+        '....5343335..',
+        '...332333333.',
+        '..33333333333',
+        '..37773337773',
+        '..38587778583',
+        '..38588888583',
+        '..37888888873',
+        '...333333333.',
+        '.F....5556...',
+        '3E34.6757.6..',
+        '.E.55.666.5..',
+        '......777.5..',
+        '.....6..7....',
+        '.....7..7....'
+    ];
+
+    game.create.texture('phaserDude', dudeData, 4, 4, 0);
+
+    //  Now we've got our textures let's just make some sprites
+    //таблица цветов
+        //{ 0: '#000', 1: '#9D9D9D', 2: '#FFF', 3: '#BE2633', 4: '#E06F8B', 5: '#493C2B', 6: '#A46422', 7: '#EB8931', 8: '#F7E26B', 9: '#2F484E', A: '#44891A', B: '#A3CE27', C: '#1B2632', D: '#005784', E: '#31A2F2', F: '#B2DCEF' },
+        //{ 0: '#000', 1: '#191028', 2: '#46af45', 3: '#a1d685', 4: '#453e78', 5: '#7664fe', 6: '#833129', 7: '#9ec2e8', 8: '#dc534b', 9: '#e18d79', A: '#d6b97b', B: '#e9d8a1', C: '#216c4b', D: '#d365c8', E: '#afaab9', F: '#f5f4eb' },
+        //{ 0: '#000', 1: '#2234d1', 2: '#0c7e45', 3: '#44aacc', 4: '#8a3622', 5: '#5c2e78', 6: '#aa5c3d', 7: '#b5b5b5', 8: '#5e606e', 9: '#4c81fb', A: '#6cd947', B: '#7be2f9', C: '#eb8a60', D: '#e23d69', E: '#ffd93f', F: '#fff' },
+        //{ 0: '#000', 1: '#fff', 2: '#8b4131', 3: '#7bbdc5', 4: '#8b41ac', 5: '#6aac41', 6: '#3931a4', 7: '#d5de73', 8: '#945a20', 9: '#5a4100', A: '#bd736a', B: '#525252', C: '#838383', D: '#acee8b', E: '#7b73de', F: '#acacac' },
+        //{ 0: '#000', 1: '#191028', 2: '#46af45', 3: '#a1d685', 4: '#453e78', 5: '#7664fe', 6: '#833129', 7: '#9ec2e8', 8: '#dc534b', 9: '#e18d79', A: '#d6b97b', B: '#e9d8a1', C: '#216c4b', D: '#d365c8', E: '#afaab9', F: '#fff' }
+    
+
+    var end = game.add.sprite(0, 600-64, 'endTexture');
+    end.width = 800;
+    end.height = 64;
+    
+    //мои текстуры
+    var color1 = ['0123456789ABCDEF'];
+    game.create.texture('col1', color1, 50, 100, 0);
+    var color2 = ['0123456789ABCDEF'];
+    game.create.texture('col2', color2, 50, 100, 1);
+    var color3 = ['0123456789ABCDEF'];
+    game.create.texture('col3', color3, 50, 100, 2);
+    var color4 = ['0123456789ABCDEF'];
+    game.create.texture('col4', color4, 50, 100, 3);
+    var color5 = ['0123456789ABCDEF'];
+    game.create.texture('col5', color5, 50, 100, 4);
+colorString1 = game.add.sprite(0, 0, 'col1');
+colorString2 = game.add.sprite(0, 100, 'col2');
+colorString3 = game.add.sprite(0, 200, 'col3');
+colorString4 = game.add.sprite(0, 300, 'col4');
+colorString5 = game.add.sprite(0, 400, 'col5');    
+    
+    
+    rats = game.add.physicsGroup();
+
+    var y = 80;
+
+    for (var i = 0; i < 9; i++)
+    {
+        var rat = rats.create(game.world.randomX, y, 'ratTexture');
+        rat.body.velocity.x = game.rnd.between(100, 300);
+        y += 48;
+    }
+
+    player = game.add.sprite(400, 32, 'phaserDude');
+    player.anchor.set(0.5);
+
+    game.physics.arcade.enable(player);
+
+    //mandala = ['79......87987987'];
+    game.create.texture('mandala', mandala, 15,15,0);
+    mandalaImage = game.add.sprite(game.world.centerX, game.world.centerY, 'mandala');
+    
+    cursors = game.input.keyboard.createCursorKeys();
+
+    
+    //var mandala;
+    createMandala();
+}
+        
+function createMandala() {
+    mandala1 = ["798771120","FE6548AB"];
+//    mandala1.length = 0;
+//    var mandalaString = [];
+//    
+//    for (var i = 0;i < 12; i++){
+//        for (var j = 0;j < 12; j++) {
+//            var k = Math.floor(Math.random() * 16);
+//            mandalaString.push(colorString[k]);
+//        }
+//    var str = mandalaString.join('');    
+//    mandala1.push(str);    
+//    mandalaString.length = 0;    
+    game.create.texture('mandala1', mandala1, 15,15,0);
+    mandalaImage1 = game.add.sprite(game.world.centerX, game.world.centerY, 'mandala1');
+    }
+
+        
+function update() {
+        
+    mandalaImage.rotation += 0.02;
+    player.rotation += 0.05;
+    
+    rats.forEach(checkPos, this);
+
+//    game.physics.arcade.overlap(player, rats, collisionHandler, null, this);
+
+    player.body.velocity.x = 0;
+    player.body.velocity.y = 0;
+
+    if (cursors.left.isDown)
+    {
+        player.body.velocity.x = -200;
+        player.scale.x = 1;
+    }
+    else if (cursors.right.isDown)
+    {
+        player.body.velocity.x = 200;
+        player.scale.x = -1;
+    }
+
+    if (cursors.up.isDown)
+    {
+        player.body.velocity.y = -200;
+    }
+    else if (cursors.down.isDown)
+    {
+        createMandala();
+        player.body.velocity.y = 200;
+    }
+
+}
+
+function checkPos (rat) {
+
+    if (rat.x > 800)
+    {
+        rat.x = -100;
+    }
+
+}
+
+function collisionHandler (player, rat) {
+
+    player.x = 400;
+    player.y = 32;
+
+}
+        
+        
+    </script>
+    </div>
+</body>    
+</html>    

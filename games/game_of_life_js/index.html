@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Game of life</title>
+        <style>
+            body {
+                background: #202028;
+                color: #fff;
+                font-family: sans-serif;
+                font-size: 2em;
+                text-align: center;
+            }
+            canvas {
+                border: solid .2em #fff;
+/*                height: 90vh;*/
+            }
+        </style> 
+    </head>
+    <body>
+        <button id="start">Start</button>
+        <div id="count"></div>
+        <canvas id="life" width="400" height="400"></canvas>
+        <script>
+var canvas = document.getElementById('life');
+var ctx = canvas.getContext('2d');
+var mas = [];
+var count = 0;   
+var timer;            
+            
+canvas.onclick = function(event){
+    var x = event.offsetX;
+    var y = event.offsetY;
+    console.log(x);
+    console.log(y);
+    x = Math.floor(x/10);
+    y = Math.floor(y/10);
+    mas[y][x] = 1;
+    console.log(mas);
+    drawField();
+}
+            
+function goLife() {
+    var n=40, m= 40;
+    for (var i = 0; i < m; i++) {
+        mas[i] = [];
+        for (var j=0; j < n; j++) {
+            mas[i][j] = 0;
+        }
+    }
+}
+goLife();
+            
+function drawField() {
+    ctx.clearRect(0,0,400,400);
+    for (var i = 0; i < 40; i++) {
+        for (var j = 0; j < 40; j++) {
+            if (mas[i][j] == 1) {
+                ctx.fillRect(j * 10, i * 10, 10, 10);
+            }
+        }
+    }
+    
+}      
+            
+function startLife() {
+    var mas2 = [];
+    for (var i = 0; i < 40; i++) {
+        mas2[i] = [];
+        for (var j = 0; j < 40; j++) {
+            var neighbors = 0;
+            if (mas[fpm(i)-1][j] == 1) neighbors++;
+            if (mas[i][fpp(j)+1] == 1) neighbors++;
+            if (mas[fpp(i)+1][j] == 1) neighbors++;
+            if (mas[i][fpm(j)-1] == 1) neighbors++;
+            if (mas[fpm(i)-1][fpp(j)+1] == 1) neighbors++;
+            if (mas[fpp(i)+1][fpp(j)+1] == 1) neighbors++;
+            if (mas[fpp(i)+1][fpm(j)-1] == 1) neighbors++;
+            if (mas[fpm(i)-1][fpm(j)-1] == 1) neighbors++;
+            (neighbors == 2 || neighbors == 3) ? mas2[i][j] = 1 : mas2[i][j] == 0;
+        }
+    }
+    mas = mas2;
+    drawField();
+    count++;
+    document.getElementById('count').innerHTML = count;
+    timer = setTimeout(startLife, 300);
+}           
+            
+function fpm(i) {
+    if (i == 0) return 40;
+    else return i;
+}        
+function fpp(i) {
+    if (i == 39) return -1;
+    else return i;
+}            
+
+document.getElementById('start').onclick = startLife;            
+        </script>
+        
+    </body>
+
+</html>
