@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IZIN_intro</title>
+<!--
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->      
+    <script type="text/javascript" src="lib/p5.js"></script>
+    <script type="text/javascript" src="lib/p5.dom.js"></script>
+    <script type="text/javascript" src="lib/p5.sound.js"></script>
+
+    <!--    <script type="text/javascript" src="js/main.js"></script>-->
+    <style>
+      body {
+        padding: 0; margin: 20px;
+      }
+/*
+      canvas {
+        vertical-align: top;
+      }
+*/
+      html {
+        font-family: monospace;
+        color: #1aaa52;
+        font-size: 80px;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div>
+    <script>
+      var osc, fft;
+      var font;
+      var vehicles = [];
+      
+      function preload() {
+        font = loadFont('image/otf/Neo Sans Std Medium TR.otf')
+      }
+      
+      function setup() {
+        createCanvas(1280, 720);
+        background(51);
+        osc = new p5.TriOsc(); // set frequency and type
+        osc.amp(.5);
+
+        fft = new p5.FFT();
+        osc.start();
+//        textFont(font);
+//        textSize(320);
+//        fill(255);
+//        noStroke();
+//        text('IZIN',360,440);
+        
+        var points = font.textToPoints('IZIN',360,440,320);
+        
+        for(var i=0; i<points.length;i++) {
+          var pt = points[i];
+          var vehicle = new Vehicle(pt.x,pt.y);
+          vehicles.push(vehicle);
+//          stroke(0,255,0);
+//          strokeWeight(8);
+//          point(pt.x,pt.y);
+        }
+      }
+      
+      function draw() {
+        background(21);
+        for (var i = 0; i < vehicles.length; i++) {
+          var v = vehicles[i];
+          v.update();
+          v.show();
+          v.behaviors();
+        }
+        var invis = mouseX;
+        push();
+        noStroke();
+        fill(255,150,25,invis);
+        ellipse(mouseX,mouseY,50,50);
+        stroke(25,150,25,invis);
+        point(mouseX+10,mouseY-10);
+        point(mouseX-10,mouseY-10);
+        bezier(mouseX-10,mouseY+10,mouseX,mouseY+5+invis/100,mouseX,mouseY+5+invis/100,mouseX+10,mouseY+10);
+        pop();
+        
+        if(mouseX < 50) {osc.stop();}else {osc.start();}
+        var freq = map(width - mouseX, 0, width+200, 20, 680);
+        osc.freq(freq);
+
+        var amp = map(mouseY, 0, height, 0.2, .01);
+        osc.amp(amp);
+      }
+      function Vehicle(x,y) {
+        this.pos = createVector(random(width),random(height));
+        this.target = createVector(x,y);
+        this.vel = p5.Vector.random2D();
+        this.acc = createVector();
+        this.r = 8;
+        this.maxspeed = 10;
+        this.maxforce = 1;
+        
+        this.colorPointG = random(50,250);
+        this.colorPointB = random(50,150);
+      }
+      Vehicle.prototype.behaviors = function() {
+        var arrive = this.arrive(this.target);
+        var mouse = createVector(mouseX,mouseY);
+        var flee = this.flee(mouse);
+        
+        arrive.mult(1);
+        flee.mult(5);
+        
+        this.applyForce(arrive);
+        this.applyForce(flee);
+      }
+      Vehicle.prototype.applyForce = function(f) {
+        this.acc.add(f);
+      }
+      Vehicle.prototype.update = function() {
+        this.pos.add(this.vel);
+        this.vel.add(this.acc);
+        this.acc.mult(0);
+      }
+      Vehicle.prototype.show = function() {
+        stroke(0,this.colorPointG,this.colorPointB);
+        strokeWeight(8);
+        point(this.pos.x,this.pos.y);
+      }
+      Vehicle.prototype.arrive = function(target) {
+        var desired = p5.Vector.sub(target,this.pos);
+        var d = desired.mag();
+        var speed = this.maxspeed;
+        if(d < 200) {
+          speed = map(d,0,100,0,this.maxspeed);
+        }
+        desired.setMag(speed);
+        var steer = p5.Vector.sub(desired,this.vel);
+        steer.limit(this.maxforce);
+        return steer;
+      }
+      Vehicle.prototype.flee = function(target) {
+        var desired = p5.Vector.sub(target,this.pos);
+        var d = desired.mag();
+        if(d < 100) {
+          desired.setMag(this.maxspeed);
+          desired.mult(-1);
+          var steer = p5.Vector.sub(desired,this.vel);
+          steer.limit(this.maxforce);
+          return steer;          
+        }else{
+          return createVector(0,0);
+        }
+      }
+
+      </script></div>
+  </body>
+</html>  
