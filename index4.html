@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -48,3 +49,234 @@
 
 </body>
 </html>
+=======
+<html>
+
+<head>
+  <title>ex_p5_sound_jump</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->
+  <script type="text/javascript" src="https://iziaslaw.github.io/lib/p5.min.js"></script>
+  <script type="text/javascript" src="https://iziaslaw.github.io/lib/p5.dom.min.js"></script>
+  <script type="text/javascript" src="https://iziaslaw.github.io/lib/p5.sound.min.js"></script>
+
+  <!--    <script type="text/javascript" src="js/main.js"></script>-->
+<style>
+  body {
+    background: #aabbcc;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+</head>
+<body>
+  <div id="code"></div>
+  <div>
+
+<script>//bird
+
+  function Bird() {
+    this.y = height / 2;
+    this.x = 64;
+    
+    this.gravity = 0.5;
+    this.lift = -15;
+    this.velocity = 0;
+    this.space = 0;
+    
+    this.show = function() {
+      translate(this.x,this.y);
+      push();
+      //fill(255);
+      //ellipse(this.x, this.y ,32, 32);
+      fill(220,150,50);
+      textSize(40);
+      rotate(-0.1*this.space);
+      text(String.fromCharCode(50682 + this.space),0-15,0+10 );
+      pop();
+    }
+    
+    this.up = function() {
+      this.velocity += this.lift;
+      this.space +=1;
+      //println(this.velocity);
+    }
+    
+    this.update = function() {
+      this.velocity += this.gravity;
+      this.velocity *= 0.9;
+      this.y += this.velocity;
+      
+      if (this.y > height-50) {
+        this.y = height-50;
+        this.velocity = 0;
+      }
+      if (this.y < 0) {
+        this.y = 0;
+        this.velocity = 0;
+      }
+    }
+  }
+  
+</script> 
+<script>//pipe
+    
+  function Pipe() {
+    this.top = random(height - 150);
+    this.bottom = height - this.top - 100;
+    this.simbol = round(random(13312,40934));
+    this.x = width;
+    this.w = 100;
+    this.speed = 2;
+    this.highlight = false;
+    
+    this.hits = function(bird) {
+      if (bird.y < this.top || bird.y > height - this.bottom) {
+        if (bird.x > this.x && bird.x < this.x + this.w) {
+          this.highlight = true;
+          return true;
+        }
+      }
+      this.highlight = false;
+      return false;
+    }
+    
+    this.show = function() {
+      fill(255);
+      if (this.highlight) {
+        fill(255, 0, 0);
+      }
+      push();
+      textSize(100);
+//13312-40934  40960-   50671-51087욧
+      //rect(this.x, 0, this.w, this.top);
+      //rect(this.x, height - this.bottom, this.w, this.bottom);
+      stroke(100,100,100);
+      for(var iTop = 0;iTop < this.top; iTop+= 100) {
+        text(String.fromCharCode(this.simbol),this.x,(this.top-10) - iTop);
+      }
+      for(var iBot = 0;iBot < this.bottom; iBot+= 100) {  
+      text(String.fromCharCode(this.simbol),this.x,(height - this.bottom +80) + iBot);
+      }
+      pop();
+    }
+    
+    this.update = function() {
+    this.x -= this.speed;
+    }  
+    
+    this.offscreen = function() {
+      if (this.x < -this.w) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  function BackPipe() {    
+    this.simbol = round(random(13312,40934));
+    this.x = width;
+    this.w = 300;
+    this.speed = 1;
+    
+    
+    
+    this.show = function() {
+      push();
+      fill(0,200,100);  
+      stroke(100);
+      strokeWeight(4);
+      textSize(400);
+      text(String.fromCharCode(this.simbol),this.x,height-50);
+      
+      pop();
+    }
+    
+    this.update = function() {
+    this.x -= this.speed;
+    }  
+    
+    this.offscreen = function() {
+      if (this.x < -this.w*2) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+    
+</script>    
+<script>//sketch
+    
+  var bird;
+  var pipes = [];
+  var backPipes = [];
+  var bp2 =100;
+  function setup() {
+    createCanvas(800, 600);
+    bird = new Bird();
+    pipes.push(new Pipe()); 
+    
+  }
+  
+  function draw() {
+    background(0,100,150);
+    bp2 -= 1/4;
+    push();
+      fill(100,100,100);      
+      textSize(100);
+    text(String.fromCharCode(27304,27215,27304,27384,27304,27304,27304,27304,27304,27334,27301,27304,27304,27308,27304,27306),bp2,200);
+      
+    pop();
+    
+    for (var i = backPipes.length - 1; i >= 0; i--) {
+      backPipes[i].show();
+      backPipes[i].update();
+            
+      if (backPipes[i].offscreen()) {
+        backPipes.splice(i, 1);
+      }
+    }
+    if (frameCount % 400 == 0 || frameCount == 1) {
+      backPipes.push(new BackPipe());
+    }
+    
+    for (var i = pipes.length - 1; i >= 0; i--) {
+      pipes[i].show();
+      pipes[i].update();
+      
+      if (pipes[i].hits(bird)) {
+        //console.log("HIT");
+      }
+      if (pipes[i].offscreen()) {
+        pipes.splice(i, 1);
+      }
+    }
+    
+    bird.update();
+    bird.show();
+    
+    if (frameCount % 150 == 0) {
+      pipes.push(new Pipe());
+    }
+    
+  }
+  
+  function keyPressed() {
+    if (key == ' ') {
+      bird.up();
+      //console.log("Space");
+    }
+  }
+  
+    
+</script>    
+  </div>
+</body>
+
+</html>
+>>>>>>> af81c982ab6b9e029e0047358737d0907d37c199
