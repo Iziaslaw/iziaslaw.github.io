@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Александр Соколов и фрики</title>
+<!--
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->      
+    <script type="text/javascript" src="bib/p5.js"></script>
+    <script type="text/javascript" src="bib/p5.dom.js"></script>
+    <script type="text/javascript" src="bib/p5.sound.js"></script>
+
+    <!--    <script type="text/javascript" src="js/main.js"></script>-->
+<style>
+  body {
+    padding: 0; margin: 0;
+  }
+  canvas {
+    vertical-align: top;
+  }
+  html {
+    font-family: monospace;
+    color: #1aaa52;
+    font-size: 80px;
+  }
+</style>
+
+  </head>
+  <body>
+    <script>
+//...player  
+      function Sok(x,y) {
+        this.w = 80;
+        this.h = 100;
+        
+        this.pos = createVector(x,y) ;
+        this.openMouth = 0;
+                                
+        this.speak = function() {
+          this.openMouth = ampSong2*50;
+        }
+        this.display = function() {
+        push();
+          translate(this.pos.x,this.pos.y);
+          scale(1+sly2.value()/2,1+sly2.value()/2);
+          noStroke();
+        fill(30);
+          //bezier(-40,-20,-60,-80,60,-80,40,-20)
+        rect(-40,-45,this.w,this.h/2)//hair
+        fill(208,169,149);//rgb(56, 95, 56);
+          ellipse(0,-5,this.w,this.h);//face
+        fill(30);
+        ellipse(0,-45,80,20);//hair
+        //bezier(-30,-50,-20,-30,20,-30,30,-50)  
+          stroke(0);
+        fill(240);
+        bezier(-30,-10,-20,-16-sly2.value(),-20,-16-sly2.value(),-10,-10);//
+        bezier(30,-10,20,-16-sly2.value(),20,-16-sly2.value(),10,-10);//  
+        //ellipse(-20,-10,20,10);//eye1
+        //ellipse(20,-10,20,10);//eye2
+        fill(50,50,100);
+        ellipse(-20,-10,6,6);//iris1 (pupil)
+        ellipse(20,-10,6,6);//iris2 (pupil)
+        noFill();
+        bezier(0,-5,0,0,-18,15,0,15);//nose
+        fill(200,100,100);
+        bezier(-10,30,-4,28,4,28,10,30);
+        bezier(-10,30,0,34+this.openMouth+sly2.value()*4,0,34+this.openMouth+sly2.value()*4,10,30);  
+          //ellipse(0,30,20,6);//mouth (lips)
+        stroke(60);
+        strokeWeight(4);
+        noFill();
+        bezier(-30,-15,-25,-18-sly2.value(),-30,-25-sly2.value(),-10,-12);//brow1
+        bezier(30,-15,25,-18-sly2.value(),30,-25-sly2.value(),10,-12);//brow2
+        //bezier(-15,20,-15,15,15,15,15,20);//moustache
+        pop();
+        }
+                
+        this.update = function() {
+          if (this.isMovingRight) {
+            this.move(10, 0);//y
+          } else if (this.isMovingLeft) {
+            this.move(-10, 0);//y
+// Y _ _ _ _            
+          } else if (this.isMovingUp) {
+            this.move(0, -10);
+          } else if (this.isMovingDown) {
+            this.move(0, 10);
+          }
+        }
+        
+        this.move = function(step, step2) {
+          this.pos.x += step;
+//движение по оси Y _          
+          this.pos.y += step2;
+        }
+        
+        this.checkEdges = function() {
+          if (this.pos.x <= 0) this.pos.x = 0;
+          else if (this.pos.x + this.w >= width) this.pos.x = width - this.w;
+//границы по оси Y _ _
+          if (this.pos.y <= this.w * 2) this.pos.y = this.w * 2;
+          else if (this.pos.y + 40 >= height) this.pos.y = height - 40;
+        }
+      }
+function Fan(x,y) {
+        this.w = 80;
+        this.h = 100;
+        
+        this.pos = createVector(x,y) ;
+        this.openMouth = 0;  
+  this.anEye = 0;
+  
+        this.r = round(random(100,210));
+        this.g = round(random(100,180));
+        this.b = round(random(100,150));
+  
+        this.nose = round(random(-10,10));
+        
+        if(random(0,1) > 0.8) {this.moustache = true;}
+        else {this.moustache = false;}
+  
+        this.display = function() {
+        push();
+          translate(this.pos.x,this.pos.y);
+        fill(this.r/3,this.g/3,this.b/3);
+          bezier(-40-this.nose/2,-20,-60,-80,60,-80,40+this.nose/2,-20)
+        //ellipse(0,-20,100,100);//hair
+        fill(this.r,this.g,this.b);
+        ellipse(0,0,this.w+this.nose,this.h+this.nose);//face
+        
+          stroke(0);
+        fill(240);
+        ellipse(-20,-20,20,10+bx1);//eye1
+        ellipse(20,-20,20,10+bx1);//eye2
+        fill(50,50,200);
+        ellipse(-20+(4*cos(this.anEye)),-20+(4*sin(this.anEye)),6,6);//iris1 (pupil)
+        ellipse(20-(4*cos(this.anEye)),-20-(4*sin(this.anEye)),6,6);//iris2 (pupil)
+        noFill();
+        bezier(0,-10-this.nose/2,0,0,20+this.nose,this.nose,0,10+this.nose/2);//nose
+        fill(200,100,100);
+        ellipse(0,25+this.openMouth*100,20,6+this.openMouth*200);//mouth (lips)
+        stroke(60);
+        strokeWeight(4);
+        noFill();
+        bezier(-30,-30,-25,-35-bx1,-25,-35,-10,-30);//brow1
+        bezier(30,-30,25,-35-bx1,25,-35,10,-30);//brow2
+        if(this.moustache) {
+          bezier(-15,20+this.openMouth*100,-15,15,15,15,15,20+this.openMouth*100);//moustache
+        }
+        pop();
+        }
+        this.speak = function() {
+          this.openMouth = ampSong;
+          this.anEye = angleEye;
+        }
+                
+      }      
+
+      
+var song,song1,analyzer2,reverb;
+let bx1=0,by1=0,bx2=400,by2=400;
+      let bx1B = true;
+      let sok; let fans = [];
+      let angleEye = 0; 
+      let ampSong = 0;let ampSong2 = 0;
+      let fanNum = 0;
+      let sly,sly1,sly2,sly3;
+      let button, button2;
+      let s = false; let s1 = false;
+
+function preload() {
+  // Load a sound file
+  song = loadSound('audio/sok_fan.mp3');
+  song1 = loadSound('audio/sok.mp3');
+  //song.disconnect();
+}
+
+function setup() {
+  createCanvas(1280/2, 720/2);
+
+  // Loop the sound forever
+  // (well, at least until stop() is called)
+  analyzer = new p5.Amplitude();
+  analyzer.setInput(song);
+  analyzer2 = new p5.Amplitude();
+  analyzer2.setInput(song1);
+  //song.loop();
+  for(var i = 0;i < 4; i++) {
+    fans.push (new Fan(130+i*90,70+i*80));    
+  } 
+  for(var i = 0;i < 3; i++) {
+    fans.push (new Fan(10+i*60,280+i*50));    
+  } 
+  for(var i = 0;i < 5; i++) {
+    fans.push (new Fan(10+i*60,130+i*50));    
+  } 
+  sok = new Sok(500,120);
+  //sly = createSlider(100, 500, 200, 10);
+  sly1 = createSlider(100, 500, 160, 10);
+  sly2 = createSlider(0, 5.0, 0, 0.2);
+ //sly3 = createSlider(0, 1.0, 0.3, 0.1);
+  
+        button = createButton('Nevog');
+        button.mousePressed(Nemog); 
+        button2 = createButton('Sokol');
+        button2.mousePressed(Sokol);
+          
+  reverb = new p5.Reverb();
+  reverb.process(song, 0.5, 0.3);
+  reverb.amp(4);
+}
+
+function draw() {
+  background(0,100,100);
+        if(bx1 <= 0) bx1B = true;
+        if(bx1 >= 6) bx1B = false;
+        if(bx1B) {bx1 +=0.1}else{bx1 -=0.1}
+        
+        if(angleEye >= TWO_PI){angleEye = 0}
+        else{angleEye += 0.02};
+        for(var j =0;j<fans.length;j++){
+          fans[j].display();
+        }
+        fans[fanNum].speak();
+          
+        sok.speak();
+        sok.display();
+        //sok.checkEdges();
+        sok.update();
+//  
+  //reverb.process(song, sly2.value(), sly3.value());
+//  
+  ampSong = analyzer.getLevel();
+  ampSong2 = analyzer2.getLevel();
+  // Set the volume to a range between 0 and 1.0
+  var volume = map(200, 0, width, 0, 1);
+  volume = constrain(volume, 0, 1);
+  song.amp(volume);
+
+  // Set the rate to a range between 0.1 and 4
+  // Changing the rate alters the pitch
+  var speed = map(fanNum*30+sly1.value(), 0.1, height, 0, 2);
+  speed = constrain(speed, 0.01, 4);
+  song.rate(speed);
+  var speed2 = map(sly1.value()+10, 0.1, height, 0, 2);
+  speed2 = constrain(speed2, 0.01, 4);
+  song1.rate(speed2);
+  
+//  text('amp'+ampSong,50,50);
+//  text('vol'+volume,50,150);
+//  text('spd'+speed,50,250);
+  // Draw some circles to show what is going on
+//  stroke(0);
+//  fill(51, 100);
+//  ellipse(mouseX, 100, 48, 10 + ampSong*300);
+//  stroke(0);
+//  fill(51, 100);
+//  ellipse(100, mouseY, 10 + ampSong*300, 48);
+}
+      
+      function keyPressed() {
+        if (key === 'a' || key === 'A') {
+          sok.isMovingLeft = true;
+        } else if (key === 'd' || key === 'D') {
+          sok.isMovingRight = true;
+        } 
+        if (key === 'w' || key === 'W') {
+          sok.isMovingUp = true;
+        } else if (key === 's' || key === 'S') {
+          sok.isMovingDown = true;
+        } 
+        if (key === 'v' || key === 'V' ) {
+          song.play();
+          if(fanNum >= 3) {fanNum = 0;}
+          else {fanNum +=1;}
+        } else if (key === 'c' || key === 'C') {
+          song1.play();
+        }
+      }
+      function keyReleased() {
+        sok.isMovingLeft = false;
+        sok.isMovingRight = false;
+        sok.isMovingUp = false;
+        sok.isMovingDown = false;
+        
+        song.pause();
+        song1.pause();
+      }
+      function Nemog() {
+        if(!s) {
+          song.play();
+          s = true;
+          if(fanNum >= 3) {fanNum = 0;}
+          else {fanNum +=1;}
+        } else {
+          song.pause();
+          s = false;
+        }
+      }
+      function Sokol() {
+        if(!s1) {
+          song1.play();
+          s1 = true;          
+        } else {
+          song1.pause();
+          s1 = false;
+        }
+      }
+
+
+    //Мы построили пирамиду! 
+    //Мы вырубили саркофаг фараона из гранита,  повторили все стеллы и мегалиты , сваяли статую Венеры Милосской с рука-ми
+    //У нас не так много денег, времени и рабочей силы
+    //Это  бесспорно ,  причем  она  плоская    со всех сторон)
+    
+    //Люди без помощи инопланетян не могли построить пирамиды! 
+    //Ну не могли они , не могли, 
+    //Но у них получалось идеально , а у вас нет!  
+    //Ну это ладно , но то что Земля плоская  мы надеемся  вы не будете спорить?
+    </script>
+  </body>
+
+</html>

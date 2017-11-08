@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>brick breaker</title>
+<!--
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->      
+    <script type="text/javascript" src="bib/p5.js"></script>
+    <script type="text/javascript" src="bib/p5.dom.js"></script>
+    <script type="text/javascript" src="bib/p5.sound.js"></script>
+<!--    <script type="text/javascript" src="bib/jquery-3.1.1.js"></script>-->
+
+    <!--    <script type="text/javascript" src="js/main.js"></script>-->
+<style>
+  body {
+    padding: 0; margin: 0;
+    font-size: 16px;
+  }
+  canvas {
+    vertical-align: top;
+  }
+  html {
+    font-family: monospace;
+    color: #1aaa52;
+    
+/*    font-size: 10px;*/
+  }
+  div {
+    display: block;
+  }
+</style>
+
+  </head>
+  <body>
+    <script>
+//...player      
+      function Player() {
+        this.w = 80;
+        this.h = 100;
+        
+        this.pos = createVector(500, 200);
+        
+        this.isMovingLeft = false;
+        this.isMovingRight = false;
+        //Y _ _
+        this.isMovingUp = false;
+        this.isMovingDown = false;
+                
+        this.display = function() {
+        push();
+          translate(this.pos.x,this.pos.y);
+//scale(1,2);
+        fill(30);
+        ellipse(0,-20,100,100);//hair
+        fill(250,150,50);
+        ellipse(0,0,this.w,this.h);//face
+        stroke(0);
+        fill(240);
+        ellipse(-20,-20,20,10+bx1);//eye1
+        ellipse(20,-20,20,10+bx1);//eye2
+        fill(50,50,200);
+        ellipse(-20+(4*cos(angleEye)),-20+(4*sin(angleEye)),6,6);//iris1 (pupil)
+        ellipse(20-(4*cos(angleEye)),-20-(4*sin(angleEye)),6,6);//iris2 (pupil)
+        noFill();
+        bezier(0,-10,0,0,-10,0,0,10);//nose
+        fill(200,100,100);
+        ellipse(0,25+bx1/2,20,6+bx1);//mouth (lips)
+        stroke(60);
+        strokeWeight(4);
+        noFill();
+        bezier(-30,-30,-25,-35-bx1,-25,-35,-10,-30);//brow1
+        bezier(30,-30,25,-35-bx1,25,-35,10,-30);//brow2
+        bezier(-15,20+bx1/2,-15,15,15,15,15,20+bx1/2);//moustache
+        pop();
+        }
+                
+        this.update = function() {
+          if (this.isMovingRight) {
+            this.move(10, 0);//y
+          } else if (this.isMovingLeft) {
+            this.move(-10, 0);//y
+// Y _ _ _ _            
+          } else if (this.isMovingUp) {
+            this.move(0, -20);
+          } else if (this.isMovingDown) {
+            this.move(0, 20);
+          }
+        }
+        
+        this.move = function(step, step2) {
+          this.pos.x += step;
+//движение по оси Y _          
+          this.pos.y += step2;
+        }
+        
+        this.checkEdges = function() {
+          if (this.pos.x <= 0) this.pos.x = 0;
+          else if (this.pos.x + this.w >= width) this.pos.x = width - this.w;
+//границы по оси Y _ _
+          if (this.pos.y <= this.w * 2) this.pos.y = this.w * 2;
+          else if (this.pos.y + 40 >= height) this.pos.y = height - 40;
+        }
+      }
+
+
+        function Skin() {
+        this.display = function() {  
+        
+          for(var i = 1;i < vertAll.length; i++) {
+          push();
+        translate(vertAll[0][0],vertAll[0][1]);
+        beginShape();
+        fill(colorAll[i][0],colorAll[i][1],colorAll[i][2],colorAll[i][3]);
+        stroke(30);
+          for(var j = 0;j<vertAll[i].length; j+=2) {
+  vertex(vertAll[i][j],vertAll[i][j+1]);
+          }
+endShape(CLOSE);
+        pop();
+          }
+        }
+        }
+      
+      let bx1=0,by1=0,bx2=400,by2=400;
+        let bx1B = true;
+      let player, ball, button, button2;
+      let angleEye = 0;
+      let points = [];
+      let vertsX = [];
+      let vertsY = [];
+      let vertAll = [[],[],[],[],[],[],[]];
+      let colorAll = [[],[],[],[],[],[],[]];
+      let skins =false;let skin;
+      let drawing = true;
+      let div0,div,div2;
+      let image = 0;
+      let sly,sly2,sly3,sly4;
+      
+      function setup() {
+        createCanvas(innerWidth, innerHeight*0.9);
+        
+        player = new Player();
+        
+        div0 = createDiv('Выбор цвета(клик по color),Первый клик по канвас задаёт центр, далее Next и т.д.');
+        div0.style("font-size", "10px");
+        //div0.position(10, 10);
+        
+        button = createButton('Color');
+        button.mousePressed(TextDrawing); 
+        button2 = createButton('Next');
+        button2.mousePressed(NextDrawing);
+        sly = createSlider(0,255,10,1);
+        sly2 = createSlider(0,255,10,1);
+        sly3 = createSlider(0,255,10,1);
+        sly4 = createSlider(0,255,200,1);
+        //div = createDiv("...");
+        div = createDiv('');
+        div2 = createDiv('');
+        //div.changed(NextDrawing);
+      }
+      
+      function draw() {
+        background(0,100,100);
+//        div.html('let vertAll = [' + vertAll[0]+'],[' + vertAll[1] + '],[' + vertAll[2] + '],[' + vertAll[3]+'],[' + vertAll[4] + '],[' + vertAll[5] + '],[' + vertAll[6] + ']');
+//        div2.html('let colorAll = [' + colorAll[0]+'],[' + colorAll[1] + '],[' + colorAll[2] + '],[' + colorAll[3]+'],[' + colorAll[4] + '],[' + colorAll[5] + '],[' + colorAll[6] + ']');
+        var col = color(sly.value(),sly2.value(),sly3.value(),sly4.value());
+        button.style("background-color", col);
+        
+        if(bx1 <= 0) bx1B = true;
+        if(bx1 >= 6) bx1B = false;
+        if(bx1B) {bx1 +=0.2}else{bx1 -=0.2}
+        
+        if(angleEye >= TWO_PI){angleEye = 0}
+        else{angleEye += 0.02};
+        player.display();
+        player.checkEdges();
+        player.update();
+        
+        for(var i = 0; i< points.length; i++) {
+          points[i].display();
+        }
+        push();
+        translate(200,200);
+        beginShape();
+rotate(angleEye);
+        scale(1,-2);
+vertex(84,  91);
+vertex(68,  19);
+vertex(21,  17);
+vertex(32, 100);
+vertex(52, 80);
+//          bezier(-30,-30,-20,-40,20,-40,30,-30);
+//          bezier(30,-30,40,-20,40,20,30,30);
+//          bezier(30,30,20,40,-20,40,-30,30);
+//          bezier(-30,30,-40,20,-40,-20,-30,-30);
+        endShape();
+        pop();
+        
+        if(vertAll[1].length > 5 ){
+          skin = new Skin();
+          skin.display();
+        }      
+      }
+      function keyPressed() {
+        if (key === 'a' || key === 'A') {
+          player.isMovingLeft = true;
+        } else if (key === 'd' || key === 'D') {
+          player.isMovingRight = true;
+        } else if (key === 'v' || key === 'V') {
+          skin = new Skin();
+          skins = true;
+        } 
+      }
+      function keyReleased() {
+        player.isMovingLeft = false;
+        player.isMovingRight = false;
+      }
+      function mousePressed() {
+        if(mouseX>= 0 && mouseX <= width && mouseY>= 0 && mouseY <= height) {
+        points.push(new Point(mouseX,mouseY));
+        console.log(mouseX-vertAll[0][0],mouseY-vertAll[0][1]);
+          if(image < 1) {
+          vertAll[image].push(mouseX);
+          vertAll[image].push(mouseY);
+        }else {
+          vertAll[image].push(mouseX-vertAll[0][0]);
+          vertAll[image].push(mouseY-vertAll[0][1]);
+        }
+        }
+      }
+      function Point(x,y) {
+        this.display = function() {
+          push();
+          strokeWeight(3);
+          stroke(colorAll[0][0],colorAll[0][1],colorAll[0][2],colorAll[0][3]);
+          point(x,y);
+          pop();
+        }
+      }  
+      function TextDrawing() {
+        colorAll[image].push(sly.value());
+        colorAll[image].push(sly2.value());
+        colorAll[image].push(sly3.value());
+        colorAll[image].push(sly4.value());
+        //div.remove();
+
+        
+      }
+      function NextDrawing() {
+        image += 1;
+      }
+//$(document).ready(function () {
+//    $('#create').on('click', function() {
+//    $('#text').html(vertsX + vertsY + ',');
+//    });
+//    });       
+      </script>
+    
+  </body>
+
+</html>
