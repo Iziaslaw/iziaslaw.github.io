@@ -34,7 +34,7 @@ function create() {
  butColH = game.world.height / 3;
  butBlH = game.world.height / 6;    
 
-    game.physics.arcade.gravity.y = 100;
+    game.physics.arcade.gravity.y = 50;
     
     bu1 = game.add.sprite(0, game.world.height - 10, 'buttonC', 15);
     button1 = game.add.button(0, game.world.height , 'buttonC', null, this, 16, 17, 15);
@@ -211,7 +211,7 @@ function create() {
     game.physics.arcade.enable(ball);
 
     ball.body.velocity.x = 100;
-    ball.body.gravity.y = 100;
+    ball.body.gravity.y = 50;
     ball.body.bounce.set(1);//скорость отскока 1=100%
     ball.body.collideWorldBounds = true;
     
@@ -266,7 +266,7 @@ function music(button) {
     pianoAll.play(button.name);
    
     
-    
+    ball.body.velocity.x = 100;
     
         
         ee = true;
