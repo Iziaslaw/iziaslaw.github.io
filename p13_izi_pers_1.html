@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>brick breaker</title>
+    <meta charset="UTF-8">
+    <title>izi pers</title>
 <!--
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 -->      
-    <script type="text/javascript" src="lib/p5.min.js"></script>
-    <script type="text/javascript" src="lib/p5.dom.min.js"></script>
-    <script type="text/javascript" src="lib/p5.sound.min.js"></script>
+    <script type="text/javascript" src="bib/p5.js"></script>
+    <script type="text/javascript" src="bib/p5.dom.js"></script>
+    <script type="text/javascript" src="bib/p5.sound.js"></script>
 <!--    <script type="text/javascript" src="bib/jquery-3.1.1.js"></script>-->
 
     <!--    <script type="text/javascript" src="js/main.js"></script>-->
@@ -35,126 +36,96 @@
   </head>
   <body>
     <script>
-//...player      
-      function Player() {
-        this.w = 80;
-        this.h = 100;
-        
-        this.pos = createVector(500, 200);
-        
-        this.isMovingLeft = false;
-        this.isMovingRight = false;
-        //Y _ _
-        this.isMovingUp = false;
-        this.isMovingDown = false;
-                
-        this.display = function() {
-        push();
-          translate(this.pos.x,this.pos.y);
-//scale(1,2);
-        fill(30);
-        ellipse(0,-20,100,100);//hair
-        fill(250,150,50);
-        ellipse(0,0,this.w,this.h);//face
-        stroke(0);
-        fill(240);
-        ellipse(-20,-20,20,10+bx1);//eye1
-        ellipse(20,-20,20,10+bx1);//eye2
-        fill(50,50,200);
-        ellipse(-20+(4*cos(angleEye)),-20+(4*sin(angleEye)),6,6);//iris1 (pupil)
-        ellipse(20-(4*cos(angleEye)),-20-(4*sin(angleEye)),6,6);//iris2 (pupil)
-        noFill();
-        bezier(0,-10,0,0,-10,0,0,10);//nose
-        fill(200,100,100);
-        ellipse(0,25+bx1/2,20,6+bx1);//mouth (lips)
-        stroke(60);
-        strokeWeight(4);
-        noFill();
-        bezier(-30,-30,-25,-35-bx1,-25,-35,-10,-30);//brow1
-        bezier(30,-30,25,-35-bx1,25,-35,10,-30);//brow2
-        bezier(-15,20+bx1/2,-15,15,15,15,15,20+bx1/2);//moustache
-        pop();
-        }
-                
-        this.update = function() {
-          if (this.isMovingRight) {
-            this.move(10, 0);//y
-          } else if (this.isMovingLeft) {
-            this.move(-10, 0);//y
-// Y _ _ _ _            
-          } else if (this.isMovingUp) {
-            this.move(0, -20);
-          } else if (this.isMovingDown) {
-            this.move(0, 20);
-          }
-        }
-        
-        this.move = function(step, step2) {
-          this.pos.x += step;
-//движение по оси Y _          
-          this.pos.y += step2;
-        }
-        
-        this.checkEdges = function() {
-          if (this.pos.x <= 0) this.pos.x = 0;
-          else if (this.pos.x + this.w >= width) this.pos.x = width - this.w;
-//границы по оси Y _ _
-          if (this.pos.y <= this.w * 2) this.pos.y = this.w * 2;
-          else if (this.pos.y + 40 >= height) this.pos.y = height - 40;
-        }
-      }
-
 
         function Skin() {
         this.display = function() {  
         
-          for(var i = 1;i < vertAll.length; i++) {
+          if(moving) {
+            for(var i = 1;i < vertAll.length; i++) {
           push();
         translate(vertAll[0][0],vertAll[0][1]);
         beginShape();
-        fill(colorAll[i][0],colorAll[i][1],colorAll[i][2],colorAll[i][3]);
-        stroke(30);
+        if(i === image) strokeWeight(4);
+        else strokeWeight(2);    
+        stroke('rgba('+colorAll[0][0]+','+ colorAll[0][1]+','+ colorAll[0][2]+','+colorAll[0][3]+')');            
+        let c = color('rgba('+colorAll[i][0]+','+ colorAll[i][1]+','+ colorAll[i][2]+','+colorAll[i][3]+')');// ,colorAll[i][3]);//cr, cg, cb, ca);//colorAll[i][0]','colorAll[i][1]','colorAll[i][2]','colorAll[i][3]); 
+            
+        fill(c);
+          for(var j = 0;j<vertAll[i].length; j+=2) {
+  vertex(vertAll[i][j]+ pointss[i][j],vertAll[i][j+1]+ pointss[i][j+1]);
+            
+          }
+endShape(CLOSE);
+        pop();
+          }}else{
+            for(var i = 1;i < vertAll.length; i++) {
+          push();
+        translate(vertAll[0][0],vertAll[0][1]);
+        beginShape();
+        if(i === image) strokeWeight(4);
+        else strokeWeight(2);    
+        stroke('rgba('+colorAll[0][0]+','+ colorAll[0][1]+','+ colorAll[0][2]+','+colorAll[0][3]+')');            
+        let c = color('rgba('+colorAll[i][0]+','+ colorAll[i][1]+','+ colorAll[i][2]+','+colorAll[i][3]+')');// ,colorAll[i][3]);//cr, cg, cb, ca);//colorAll[i][0]','colorAll[i][1]','colorAll[i][2]','colorAll[i][3]); 
+            
+        fill(c);
           for(var j = 0;j<vertAll[i].length; j+=2) {
   vertex(vertAll[i][j],vertAll[i][j+1]);
+            
           }
 endShape(CLOSE);
         pop();
           }
+          }
         }
         }
       
-      let bx1=0,by1=0,bx2=400,by2=400;
+      let ba=0,by1=0,bx2=400,by2=400;
         let bx1B = true;
-      let player, ball, button, button2;
-      let angleEye = 0;
+      let button, button2,button3,button4,button5,button6,button7,words;
       let points = [];
-      let vertsX = [];
-      let vertsY = [];
-      let vertAll = [[],[],[],[],[],[],[]];
-      let colorAll = [[],[],[],[],[],[],[]];
+      let pointss = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+      let moving = false;
+      let pointsMove = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+      let vertAll = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+      let colorAll = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+      
+      let vertAll1 =[-61,-17,-5,-50,47,-21,42,36,7,42,-46,34,-73,2,-69,-42,-32,-66,9,-66,45,-44,59,-9,60,43,29,73,-13,79,-58,68,-90,24,-97,-17,-77,-74,-25,-90,48,-79,81,-28,93,25,80,79,3,109,-64,107,-100,79,-126,-2,-114,-69,-66,-103,-6,-109,53,-98,93,-46,95,17,-153,53,120,-120,-31,132,-127,-132,147,60,-150,96,5,-179,69,104,-213,-30,185,-48,-113,114,-44,-193,130,95,-169,-90,23,131,61,-167,-183,34,154,9];
+
       let skins =false;let skin;
       let drawing = true;
-      let div0,div,div2;
+      let div0,div,div2,json;
       let image = 0;
-      let sly,sly2,sly3,sly4;
+      let sly,sly2,sly3,sly4,inp,g;
       
       function setup() {
         createCanvas(innerWidth, innerHeight*0.9);
+        frameRate(6);
+        //g = loadImage("imageNew/max.jpg");
         
-        player = new Player();
-        
-        div0 = createDiv('Выбор цвета(клик по color),Первый клик по канвас задаёт центр, далее Next и т.д.');
+        div0 = createDiv('Выбор цвета(клик по color),Первый клик по канвас задаёт центр, далее Next и т.д. рисуем многогранники');
         div0.style("font-size", "10px");
         //div0.position(10, 10);
         
-        button = createButton('Color');
-        button.mousePressed(TextDrawing); 
-        button2 = createButton('Next');
+        button4 = createButton('BackImage');
+        button4.mousePressed(BackDrawing);
+        button2 = createButton('NextImage');
         button2.mousePressed(NextDrawing);
+        button = createButton('Color');
+        button.mousePressed(ColorDrawing); 
         sly = createSlider(0,255,10,1);
         sly2 = createSlider(0,255,10,1);
         sly3 = createSlider(0,255,10,1);
-        sly4 = createSlider(0,255,200,1);
+        sly4 = createSlider(0,1,0.5,0.01);
+        button3 = createButton('UndoPoint');
+        button3.mousePressed(UndoDrawing);
+        inp =createInput('');
+        //inp.input(inputEvent);
+        button6 = createButton('Move');
+        button6.mousePressed(PointsMove);
+        button5 = createButton('SaveImage');
+        button5.mousePressed(SaveCanv);
+        button6 = createButton('SaveTXT');
+        button6.mousePressed(SaveString);
         //div = createDiv("...");
         div = createDiv('');
         div2 = createDiv('');
@@ -162,71 +133,80 @@ endShape(CLOSE);
       }
       
       function draw() {
-        background(0,100,100);
-//        div.html('let vertAll = [' + vertAll[0]+'],[' + vertAll[1] + '],[' + vertAll[2] + '],[' + vertAll[3]+'],[' + vertAll[4] + '],[' + vertAll[5] + '],[' + vertAll[6] + ']');
-//        div2.html('let colorAll = [' + colorAll[0]+'],[' + colorAll[1] + '],[' + colorAll[2] + '],[' + colorAll[3]+'],[' + colorAll[4] + '],[' + colorAll[5] + '],[' + colorAll[6] + ']');
-        var col = color(sly.value(),sly2.value(),sly3.value(),sly4.value());
+        background(150);
+        push();
+        textSize(190);
+        text('IZIASLAW',150,300);
+        text('Presents',180,600);
+        pop();
+        text('<'+image+'>',10,height-30);
+      words = 'imageArr[] = { name:"'+inp.value()+'",  image: [[' + vertAll[0]+'],[' + vertAll[1] + '],[' + vertAll[2] + '],[' + vertAll[3]+'],[' + vertAll[4] + '],[' + vertAll[5] + '],[' + vertAll[6] + '],[' + vertAll[7] + '],[' + vertAll[8]+'],[' + vertAll[9] + '],[' + vertAll[10] + '],[' + vertAll[11]+'],[' + vertAll[12] + '],[' + vertAll[13] + '],[' + vertAll[14]+'],[' + vertAll[15] + '],[' + vertAll[16] + '],[' + vertAll[17]+'],[' + vertAll[18] + '],[' + vertAll[19] + ']],  color:'+' [[' + colorAll[0]+'],[' + colorAll[1] + '],[' + colorAll[2] + '],[' + colorAll[3]+'],[' + colorAll[4] + '],[' + colorAll[5] + '],[' + colorAll[6] + '],[' + colorAll[7] + '],[' + colorAll[8]+'],[' + colorAll[9] + '],[' + colorAll[10] + '],[' + colorAll[11]+'],[' + colorAll[12] + '],[' + colorAll[13] + '],[' + colorAll[14]+'],[' + colorAll[15] + '],[' + colorAll[16] + '],[' + colorAll[17]+'],[' + colorAll[18] + '],[' + colorAll[19] + ']]}';
+        div.html(words);
+        var col = color('rgba('+sly.value()+','+sly2.value()+','+sly3.value()+','+sly4.value()+')');
+        div2.html('The End');
         button.style("background-color", col);
         
-        if(bx1 <= 0) bx1B = true;
-        if(bx1 >= 6) bx1B = false;
-        if(bx1B) {bx1 +=0.2}else{bx1 -=0.2}
+        if(ba <= 0) bx1B = true;
+        if(ba >= 3.15) bx1B = false;
+        if(bx1B) {ba +=0.05}else{ba -=0.05}
         
-        if(angleEye >= TWO_PI){angleEye = 0}
-        else{angleEye += 0.02};
-        player.display();
-        player.checkEdges();
-        player.update();
-        
+                
         for(var i = 0; i< points.length; i++) {
           points[i].display();
         }
-        push();
-        translate(200,200);
-        beginShape();
-rotate(angleEye);
-        scale(1,-2);
-vertex(84,  91);
-vertex(68,  19);
-vertex(21,  17);
-vertex(32, 100);
-vertex(52, 80);
-//          bezier(-30,-30,-20,-40,20,-40,30,-30);
-//          bezier(30,-30,40,-20,40,20,30,30);
-//          bezier(30,30,20,40,-20,40,-30,30);
-//          bezier(-30,30,-40,20,-40,-20,-30,-30);
-        endShape();
-        pop();
+//        push();
+//        translate(200,200);
+//        beginShape();
+//        fill(190, 177, 28)
+//rotate(0 + ba);
+//        //scale(1,-2);
+//for(var j = 0;j<vertAll1.length; j+=2) {
+//  vertex(vertAll1[j],vertAll1[j+1]);
+//  //console.log(1);
+//          }
+////          bezier(-30,-30,-20,-40,20,-40,30,-30);
+////          bezier(30,-30,40,-20,40,20,30,30);
+////          bezier(30,30,20,40,-20,40,-30,30);
+////          bezier(-30,30,-40,20,-40,-20,-30,-30);
+//        endShape(CLOSE);
+//        pop();
         
         if(vertAll[1].length > 5 ){
           skin = new Skin();
           skin.display();
         }      
+        
+if(moving) {
+  for(var i = 1;i < vertAll.length; i++) {
+                
+          for(var j = 0;j<vertAll[i].length; j++) {
+            //pointsMove[i][j].push('9');//round(random(-6,6)));
+            pointss[i][j] += pointsMove[i][j];
+            
+          }
+          }}        
+      }
+      
+      function inputEvent() {
+        
       }
       function keyPressed() {
-        if (key === 'a' || key === 'A') {
-          player.isMovingLeft = true;
-        } else if (key === 'd' || key === 'D') {
-          player.isMovingRight = true;
-        } else if (key === 'v' || key === 'V') {
-          skin = new Skin();
-          skins = true;
-        } 
+        
       }
       function keyReleased() {
-        player.isMovingLeft = false;
-        player.isMovingRight = false;
+        
       }
       function mousePressed() {
         if(mouseX>= 0 && mouseX <= width && mouseY>= 0 && mouseY <= height) {
+        if(points.length >= 4) points.shift(); 
         points.push(new Point(mouseX,mouseY));
-        console.log(mouseX-vertAll[0][0],mouseY-vertAll[0][1]);
+  //console.log(mouseX-vertAll[0][0],round(mouseY-vertAll[0][1]));
           if(image < 1) {
           vertAll[image].push(mouseX);
-          vertAll[image].push(mouseY);
+          vertAll[image].push(round(mouseY));
         }else {
           vertAll[image].push(mouseX-vertAll[0][0]);
-          vertAll[image].push(mouseY-vertAll[0][1]);
+          vertAll[image].push(round(mouseY-vertAll[0][1]));
         }
         }
       }
@@ -234,22 +214,62 @@ vertex(52, 80);
         this.display = function() {
           push();
           strokeWeight(3);
-          stroke(colorAll[0][0],colorAll[0][1],colorAll[0][2],colorAll[0][3]);
+          stroke('rgba('+colorAll[0][0]+','+colorAll[0][1]+','+colorAll[0][2]+','+colorAll[0][3]+')');
           point(x,y);
           pop();
         }
       }  
-      function TextDrawing() {
+      function ColorDrawing() {
+        if(colorAll[image].length > 0) {
+          colorAll[image].splice(0,4);
+        }
+        
         colorAll[image].push(sly.value());
         colorAll[image].push(sly2.value());
         colorAll[image].push(sly3.value());
         colorAll[image].push(sly4.value());
         //div.remove();
-
+        
         
       }
       function NextDrawing() {
         image += 1;
+      }
+      function BackDrawing() {
+        image -= 1;
+      }
+      function UndoDrawing() {
+        vertAll[image].splice(vertAll[image].length - 2,2);
+        //points.pop();
+      }
+      function SaveCanv() {
+        saveCanvas(["canvas"],["png"]);
+      }
+      function SaveString() {
+        //let list = split(words, '');
+        //saveStrings(words, 'image.txt');
+        json = {};
+        json.name = inp.value();
+        json.image = vertAll;
+        json.color = colorAll;
+        save(json, 'lion.json');
+      }
+      function PointsMove() {
+        pointsMove = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+        pointss = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+        
+        for(var i = 1;i < vertAll.length; i++) {
+                
+          for(var j = 0;j<vertAll[i].length; j++) {
+            //pointsMove[i][j].push('9');//round(random(-6,6)));
+            pointsMove[i].push(round(random(-5,5)));
+            pointss[i].push(0);
+          }
+          }
+        
+        
+        if(!moving) moving = true;
+        else moving = false;
       }
 //$(document).ready(function () {
 //    $('#create').on('click', function() {

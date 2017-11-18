@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>izi pers</title>
+<!--
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->      
+    <script type="text/javascript" src="bib/p5.js"></script>
+    <script type="text/javascript" src="bib/p5.dom.js"></script>
+    <script type="text/javascript" src="bib/p5.sound.js"></script>
+<!--    <script type="text/javascript" src="bib/jquery-3.1.1.js"></script>-->
+
+    <!--    <script type="text/javascript" src="js/main.js"></script>-->
+<style>
+  body {
+    padding: 0; margin: 0;
+    font-size: 16px;
+  }
+  canvas {
+    vertical-align: top;
+  }
+  html {
+    font-family: monospace;
+    color: #1aaa52;
+    
+/*    font-size: 10px;*/
+  }
+  div {
+    display: block;
+  }
+</style>
+
+  </head>
+  <body>
+    <script>
+
+        function Skin() {
+        this.display = function() {  
+        
+          if(moving){for(var i = 1;i < imageArr[imageNum].image.length; i++) {
+          push();
+        translate(imageArr[imageNum].image[0][0],imageArr[imageNum].image[0][1]);
+        beginShape();    
+        rotate(sly.value());
+        scale(sly2.value(),sly3.value());    
+        stroke('rgba('+imageArr[imageNum].color[0][0]+','+ imageArr[imageNum].color[0][1]+','+ imageArr[imageNum].color[0][2]+','+imageArr[imageNum].color[0][3]+')');            
+        let c = color('rgba('+imageArr[imageNum].color[i][0]+','+ imageArr[imageNum].color[i][1]+','+ imageArr[imageNum].color[i][2]+','+imageArr[imageNum].color[i][3]+')');// ,colorAll[i][3]);//cr, cg, cb, ca);//colorAll[i][0]','colorAll[i][1]','colorAll[i][2]','colorAll[i][3]); 
+            
+        fill(c);
+          for(var j = 0;j<imageArr[imageNum].image[i].length; j+=2) {
+  vertex(imageArr[imageNum].image[i][j] + points[i][j],imageArr[imageNum].image[i][j+1] + points[i][j+1]);
+            
+          }
+endShape(CLOSE);
+        pop();
+          }}
+          else 
+            {for(var i = 1;i < imageArr[imageNum].image.length; i++) {
+          push();
+        translate(imageArr[imageNum].image[0][0],imageArr[imageNum].image[0][1]);
+        beginShape();    
+        rotate(sly.value());
+        scale(sly2.value(),sly3.value());    
+        stroke('rgba('+imageArr[imageNum].color[0][0]+','+ imageArr[imageNum].color[0][1]+','+ imageArr[imageNum].color[0][2]+','+imageArr[imageNum].color[0][3]+')');            
+        let c = color('rgba('+imageArr[imageNum].color[i][0]+','+ imageArr[imageNum].color[i][1]+','+ imageArr[imageNum].color[i][2]+','+imageArr[imageNum].color[i][3]+')');// ,colorAll[i][3]);//cr, cg, cb, ca);//colorAll[i][0]','colorAll[i][1]','colorAll[i][2]','colorAll[i][3]); 
+            
+        fill(c);
+          for(var j = 0;j<imageArr[imageNum].image[i].length; j+=2) {
+  vertex(imageArr[imageNum].image[i][j],imageArr[imageNum].image[i][j+1] );
+            
+          }
+endShape(CLOSE);
+        pop();
+          }}
+        }
+        }
+      
+      let bx1=0,by1=0,bx2=400,by2=400;
+        let bx1B = true;
+      let button, button2,button3,button4;
+      let points = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+      let moving = false;
+      let pointsMove = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+      let colorAll = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+      
+      let imageArr = [];
+      imageArr[0] = { name:"ship", image: [[462,453],[-169,34,-142,23,-114,34,-81,27,-48,35,-10,31,20,42,69,30,115,42,156,30,213,51,264,30,314,52,329,95,-178,81],[-72,62,35,65,115,64,179,62,202,51,223,36,243,7,275,-28,320,-50,230,-29,175,-28,90,-21,32,-18,-12,-18,-39,-66,-86,-67,-100,-67,-110,-38,-104,18,-115,51,-117,64],[83,-212,79,-23,89,-24,87,-231],[87,-192,136,-190,159,-177,177,-152,185,-120,187,-84,184,-53,167,-39,144,-34,115,-35,89,-35,102,-61,107,-90,108,-120,106,-151],[-108,32,-94,32,-72,31,-53,30,-33,40,2,37,26,31,53,25,88,32,110,39,138,41,161,37,187,39,213,50,263,29,314,48,331,96,-181,83,-172,33,-144,21],[74,-223,97,-224,92,-207,78,-207],[],[],[],[],[],[],[]],
+      color: [[10,10,10,0.5],[53,111,255,0.62],[174,129,0,0.96],[51,20,0,0.96],[255,0,0,0.71],[87,174,217,0.71],[111,131,33,0.75],[],[],[],[],[],[],[]]}
+      imageArr[1] = { name:"ddd", image: [[451,420],[-119,41,116,16,61,116,-138,149,-192,31,-125,-71,48,-106],[-41,-146,136,148,-103,-123,201,38],[145,64,276,12,319,43,334,87,330,128,289,156,267,185,238,198,190,189,163,182,132,179],[221,-159,180,-178,180,-213,206,-249,248,-256,272,-233,273,-208,262,-183,249,-168,205,-152,188,-153,153,-175,154,-205,165,-258,188,-270,232,-274,271,-270,288,-237,286,-208,270,-174,244,-156,213,-149,195,-148,156,-172],[],[],[],[],[],[],[],[],[]], color: [[10,10,10,0.5],[255,10,10,0.5],[0,255,10,0.67],[0,255,255,0.67],[213,234,0,0.8],[],[],[],[],[],[],[],[],[]]}
+imageArr[2] = { "name": "wew", "image": [ [ 299, 496 ], [ -61, 16, 58, 42, -33, 118, -11, 46 ], [], [ 61, 111, -70, 64, 29, -9, -26, 57 ], [], [], [], [], [], [], [], [], [], [] ], "color": [ [ 10, 10, 10, 0.5 ], [ 234, 10, 10, 0.5 ], [], [ 234, 255, 10, 0.5 ], [], [], [], [], [], [], [], [], [], [] ] } 
+imageArr[3] = { name:"fff", image: [[361,581],[-40,15,94,-59,42,50,-86,-69,38,-77,5,112,-216,78,143,9,-15,-175,-75,191],[-134,14,130,158,94,167,81,91,-108,-14,-92,18],[-222,195,175,193,168,-198,-191,-180,-247,-48,-275,-54,-206,-191,182,-210,188,200,-238,211],[],[],[],[],[],[],[],[],[],[]], color: [[10,10,10,0.5],[255,10,10,0.5],[0,255,10,0.5],[0,105,250,0.5],[],[],[],[],[],[],[],[],[],[]]}
+      
+      let skins =false;let skin;
+      let drawing = true;
+      let imageNum = 0;
+      let image;
+      let sly,sly2,sly3,sly4;
+      
+      function setup() {
+        createCanvas(innerWidth, innerHeight*0.9);
+        image = new Skin(); 
+        frameRate(6);
+        
+        button4 = createButton('BackImage');
+        button4.mousePressed(BackDrawing);
+        button2 = createButton('NextImage');
+        button2.mousePressed(NextDrawing);   
+        button3 = createButton('Move');
+        button3.mousePressed(PointsMove);
+        sly = createSlider(-3.15,3.15,0,0.01);//Angle
+        sly2 = createSlider(-1,10,1,0.1);//X
+        sly3 = createSlider(-1,10,1,0.1);//Y
+        sly4 = createSlider(0,1,0.5,0.01);
+        
+        
+      }
+      
+      function draw() {
+        background(130);
+//кирпичная стена rgb(170, 60, 46);
+            push();
+        stroke(150);
+        fill(170, 60, 46);
+        for(let i=0;i< innerHeight/34;i++){
+          for(let j = 0; j< innerWidth/60;j++){
+            if(i % 2 === 0) rect(-10+j*64,0+i*34,60,30);
+            else rect(-10+j*64 -32,0+i*34,60,30);
+          }
+        }
+            pop();
+        
+        text('<'+imageArr[imageNum].name+'>',10,height - 20);
+        text('Поворот(рад): '+ sly.value(),220,height - 20);       
+        text('Масштаб(X): '+ sly2.value(),350,height - 20);       
+        text('Масштаб(Y): '+ sly3.value(),500,height - 20);        
+                              
+        image.display();      
+      
+if(moving) {
+  for(var i = 1;i < imageArr[imageNum].image.length; i++) {
+                
+          for(var j = 0;j<imageArr[imageNum].image[i].length; j++) {
+            //pointsMove[i][j].push('9');//round(random(-6,6)));
+            points[i][j] += pointsMove[i][j];
+            
+          }
+          }}
+      }
+      function NextDrawing() {
+        moving = false;
+        
+        if(imageNum >= imageArr.length-1) imageNum = 0;
+        else imageNum += 1;
+      }
+      function BackDrawing() {
+        moving = false;
+        
+        if(imageNum <= 0) imageNum = imageArr.length-1;
+        else imageNum -= 1;
+      }
+      function PointsMove() {
+        pointsMove = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+        points = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
+        
+        for(var i = 1;i < imageArr[imageNum].image.length; i++) {
+                
+          for(var j = 0;j<imageArr[imageNum].image[i].length; j++) {
+            //pointsMove[i][j].push('9');//round(random(-6,6)));
+            pointsMove[i].push(round(random(-5,5)));
+            points[i].push(0);
+          }
+          }
+        
+        
+        if(!moving) moving = true;
+        else moving = false;
+//        if(points[1].length < 2) {points = pointsMove;}
+//        else {points.length = 0;}
+      }
+      
+     
+      </script>
+    
+  </body>
+
+</html>
