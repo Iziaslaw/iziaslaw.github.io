@@ -8,9 +8,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 -->      
-    <script type="text/javascript" src="bib/p5.js"></script>
-    <script type="text/javascript" src="bib/p5.dom.js"></script>
-    <script type="text/javascript" src="bib/p5.sound.js"></script>
+    <script type="text/javascript" src="https://iziaslaw.github.io/lib/p5.min.js"></script>
+    <script type="text/javascript" src="https://iziaslaw.github.io/lib/p5.dom.min.js"></script>
+    <script type="text/javascript" src="https://iziaslaw.github.io/lib/p5.sound.min.js"></script>
 <!--    <script type="text/javascript" src="bib/jquery-3.1.1.js"></script>-->
 
     <!--    <script type="text/javascript" src="js/main.js"></script>-->
@@ -45,6 +45,9 @@
           push();
         translate(vertAll[0][0],vertAll[0][1]);
         beginShape();
+      if(rotation) {rotate(ba);}
+        else {rotate(0);} 
+              
         if(i === image) strokeWeight(4);
         else strokeWeight(2);    
         stroke('rgba('+colorAll[0][0]+','+ colorAll[0][1]+','+ colorAll[0][2]+','+colorAll[0][3]+')');            
@@ -62,6 +65,8 @@ endShape(CLOSE);
           push();
         translate(vertAll[0][0],vertAll[0][1]);
         beginShape();
+        if(rotation) {rotate(ba);}
+        else {rotate(0);}      
         if(i === image) strokeWeight(4);
         else strokeWeight(2);    
         stroke('rgba('+colorAll[0][0]+','+ colorAll[0][1]+','+ colorAll[0][2]+','+colorAll[0][3]+')');            
@@ -85,6 +90,7 @@ endShape(CLOSE);
       let points = [];
       let pointss = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
       let moving = false;
+      let rotation = false;
       let pointsMove = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
       let vertAll = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
       let colorAll = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
@@ -122,6 +128,8 @@ endShape(CLOSE);
         //inp.input(inputEvent);
         button6 = createButton('Move');
         button6.mousePressed(PointsMove);
+        button7 = createButton('Rotation');
+        button7.mousePressed(Rotations);
         button5 = createButton('SaveImage');
         button5.mousePressed(SaveCanv);
         button6 = createButton('SaveTXT');
@@ -133,12 +141,8 @@ endShape(CLOSE);
       }
       
       function draw() {
-        background(150);
-        push();
-        textSize(190);
-        text('IZIASLAW',150,300);
-        text('Presents',180,600);
-        pop();
+        background(100);
+        
         text('<'+image+'>',10,height-30);
       words = 'imageArr[] = { name:"'+inp.value()+'",  image: [[' + vertAll[0]+'],[' + vertAll[1] + '],[' + vertAll[2] + '],[' + vertAll[3]+'],[' + vertAll[4] + '],[' + vertAll[5] + '],[' + vertAll[6] + '],[' + vertAll[7] + '],[' + vertAll[8]+'],[' + vertAll[9] + '],[' + vertAll[10] + '],[' + vertAll[11]+'],[' + vertAll[12] + '],[' + vertAll[13] + '],[' + vertAll[14]+'],[' + vertAll[15] + '],[' + vertAll[16] + '],[' + vertAll[17]+'],[' + vertAll[18] + '],[' + vertAll[19] + ']],  color:'+' [[' + colorAll[0]+'],[' + colorAll[1] + '],[' + colorAll[2] + '],[' + colorAll[3]+'],[' + colorAll[4] + '],[' + colorAll[5] + '],[' + colorAll[6] + '],[' + colorAll[7] + '],[' + colorAll[8]+'],[' + colorAll[9] + '],[' + colorAll[10] + '],[' + colorAll[11]+'],[' + colorAll[12] + '],[' + colorAll[13] + '],[' + colorAll[14]+'],[' + colorAll[15] + '],[' + colorAll[16] + '],[' + colorAll[17]+'],[' + colorAll[18] + '],[' + colorAll[19] + ']]}';
         div.html(words);
@@ -146,10 +150,13 @@ endShape(CLOSE);
         div2.html('The End');
         button.style("background-color", col);
         
+        if(rotation) {
         if(ba <= 0) bx1B = true;
         if(ba >= 3.15) bx1B = false;
         if(bx1B) {ba +=0.05}else{ba -=0.05}
-        
+        }else {
+          ba = 0;
+        }
                 
         for(var i = 0; i< points.length; i++) {
           points[i].display();
@@ -270,6 +277,10 @@ if(moving) {
         
         if(!moving) moving = true;
         else moving = false;
+      }
+      function Rotations() {
+        if(!rotation) rotation = true;
+        else rotation = false;
       }
 //$(document).ready(function () {
 //    $('#create').on('click', function() {

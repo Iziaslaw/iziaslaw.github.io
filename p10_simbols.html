@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>10PRINT</title>
+<!--
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->      
+    <script type="text/javascript" src="lib/p5.min.js"></script>
+    <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+<!--
+    <script type="text/javascript" src="bib/p5.sound.js"></script>
+-->
+
+    <!--    <script type="text/javascript" src="js/main.js"></script>-->
+    <style>
+      body {
+        padding: 0; margin: 0;
+      }
+      canvas {
+        vertical-align: top;
+      }
+      html {
+        font-family: monospace;
+        color: #1aaa52;
+        font-size: 80px;
+      }
+    </style>
+
+  </head>
+  <body>
+    <script>
+      let x = 10;
+      let y = 40;
+      let spacing = 79;
+      let s = 0;
+      let slider;
+      
+      function setup() {
+        createCanvas(innerWidth, innerHeight * 0.9);
+        background(0);
+        //frameRate(20);
+        slider = createSlider(1, 60, 20,1);      }
+      
+      function draw() {
+        frameRate(slider.value());
+        fill(255);
+        //stroke(255);
+        //if (random(1) < 0.5) {
+          //fill(200,100,100);
+          //rect(x, y, spacing, spacing);
+          //line(x, y, x + spacing, y + spacing);
+        //} else {
+          //line(x, y + spacing, x + spacing, y);
+        //}
+        textSize(40);
+        //text(String.fromCharCode(0x266B + s),x,y);
+        text(String.fromCharCode(1 + s),x,y);
+        textSize(12);
+        
+        text('U+' + String.fromCharCode(1 + s).charCodeAt(0).toString(16),x,y+25);
+        text('&#' + (1 + s),x,y+40);
+        //'*'.charCodeAt(0).toString(16) //выводит 2A
+
+        s ++;
+        x = x + spacing;
+        if (x > width-30) {
+          x = 10;
+          y = y + spacing;
+        }
+        if (y > height-40) {
+          background(random(10,200),random(10,200),random(10,200));
+          y = 40;
+        }
+      }
+
+    </script>
+  </body>
+</html>  

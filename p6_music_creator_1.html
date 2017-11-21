@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>music_creator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->
+  <script type="text/javascript" src="lib/p5.min.js"></script>
+  <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+  <script type="text/javascript" src="lib/p5.sound.min.js"></script>
+
+  <!--    <script type="text/javascript" src="js/main.js"></script>-->
+<style>
+  body {
+    background: #aabbcc;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+</head>
+<body>
+  <div>
+
+<script>
+//   function toggle() {
+//     env.play();
+//     timer = millisecond + lengthNote * 2;
+//     //timer2 = millisecond + lengthNote2 * 2;
+//     //timer3 = millisecond + lengthNote3 * 2;
+//   }
+//  function toggle1() {
+//    env.play();
+//    timer2 = millisecond + lengthNote2 * 2;
+//  }
+  function tableNotes(x,y) {
+    this.x = x;//50
+    this.y = y;//50
+    this.w = 32;
+    this.h = 8;
+    this.lenString = round((width-100)/this.w);
+    
+    this.update = function() {
+    push();
+    fill(250);
+    rect(this.x-20, this.y-40, width - 40, 160);
+      stroke(230);
+      for (var i = 0; i < 19; i++) {
+      line(this.x ,this.y-32 + i* this.h, width - 50, this.y-32 + i * this.h);
+    }
+    stroke(0);
+    for (var i = 0; i < 5; i++) {
+      line(this.x ,this.y + i* this.h, width - 50, this.y + i * this.h);
+    }
+    for (var i = 0; i < 5; i++) {
+      line(this.x ,this.y+ 48 + i*this.h, width - 50, this.y+ 48 + i * this.h);
+    }
+    pop();
+ //Ins 1   
+    for(var i = 0;i< tableNoteArr.length;i++) {
+    for(var j = 0; j < this.lenString; j++) {
+    var xN =50;
+    var yN = 0 +i*200;      
+      if(musicComp.heightNIns1[j+i*this.lenString] === 1) {
+      text(musicComp.imageNIns1[j+i*this.lenString],xN+j*this.w, musicComp.heightNIns1[j+i*this.lenString]+150 + yN);
+        
+      }else if(musicComp.heightNIns1[j+i*this.lenString] > 1){
+        text(musicComp.imageNIns1[j+i*this.lenString],xN+j*this.w, musicComp.heightNIns1[j+i*this.lenString] + yN);        
+      }
+      
+        if(instr === 1) {
+          
+        text('V',50 + xCN * this.w + 8 ,yCN + 165);
+    }
+    }
+    } 
+//Ins 2      
+      push();
+      stroke(150,50,50);
+      fill(50,200,50);
+      for(var i = 0;i< tableNoteArr.length;i++) {
+    for(var j = 0; j < this.lenString; j++) {
+    var xN =50;
+    var yN = 0 +i*200;      
+      if(musicComp.heightNIns2[j+i*this.lenString] === 1) {
+      text(musicComp.imageNIns2[j+i*this.lenString],xN+j*this.w+8, musicComp.heightNIns2[j+i*this.lenString]+165 + yN);
+        
+      }else if(musicComp.heightNIns2[j+i*this.lenString] > 1){
+        text(musicComp.imageNIns2[j+i*this.lenString],xN+j*this.w+8, musicComp.heightNIns2[j+i*this.lenString] + yN);        
+      }
+      
+    if(instr === 2) {
+          
+        text('V',50 + xCN * this.w + 16,yCN + 165);
+    }
+    } 
+    }
+      pop();
+    }
+    
+  }
+  var musicComp  = {
+    name: '',
+    freqNIns1: [],
+    lenNIns1: [],
+    heightNIns1: [],
+    imageNIns1: [],
+    freqNIns2: [],
+    lenNIns2: [],
+    heightNIns2: [],
+    imageNIns2: []
+  };
+  //var tableNote;
+      var xCN = 0;
+      var yCN = 0;
+  var myFont;
+  var cursorN;
+  var tableNoteArr = [];
+  var noteNumArr = [24,26,28,29,31, 33, 35, 36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88, 89, 91, 93, 95];
+  var noteLitArr = ['C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B'];
+  var noteLit;
+  var lenNote = 8000;
+  var pause = false;
+  var imageNote = ['w','h','q','e','x','y','O','1','2','3','4','5','6','O'];
+  var imageNum = 0;
+    var curX;
+    var curY;
+  var button,button2,button3,button4,button5,button6,button7,button8,button9,button10,button11,inp;
+  var instr = 1;
+  var playing = false;
+  var sharp = false;
+  var sharpLit = ' ';
+  var changeNote = false;
+  var changeNoteNum = 0;
+  var env,env2,wave,wave2, millisecond, freqNote, freqNote2, lengthNote, lengthNote2;
+  var timer = 0;
+  var timer2 = 0;
+  var Ni = 0;
+  var Ni2 = 0;
+  var dotted = 1;
+  var dottedLit = '';
+  
+function preload() {
+  myFont = loadFont('image/otf/OPUSTEXT.TTF');
+}
+  function setup() {
+    createCanvas(innerWidth, innerHeight*0.95);
+    //frameRate(6);
+    
+    for(var i =0;i < height/260;i++) {      
+      var tableNote = new tableNotes(48,48+i*200);
+          tableNoteArr.push(tableNote);
+    }
+    textFont(myFont);
+    textSize(30);
+  button = createButton('NOTE');
+  button.position(10,height-20);
+  button.mousePressed(PauseN);
+    button2 = createButton('SIZE 1/1');
+    button2.position(70,height-20);
+    button2.mousePressed(SizeN);
+  button10 = createButton('dotting');
+  button10.position(70,height);
+  button10.mousePressed(Dotting);
+    button3 = createButton('Ins 1');
+    button3.position(140,height-20);
+    button3.mousePressed(NextIns);
+  button5 = createButton('#');
+  button5.position(190,height-20);
+  button5.mousePressed(Sharp);
+    inp =createInput('TITLE');
+    inp.position(230, height-20);
+     button4 = createButton('&#9654;');//&#9654;&#1520;
+     button4.position(410,height-20);
+     button4.mousePressed(PlayComp);
+  button6 = createButton('&#8656;');//&#8656;&#8658;
+  button6.position(150,height);
+  button6.mousePressed(ChangeNLeft);
+     button7 = createButton('&#8658;');//&#8656;&#8658;
+     button7.position(180,height);
+     button7.mousePressed(ChangeNRight);
+    button8 = createButton('Change');
+    button8.style("background-color", color(250,250,250));
+    button8.position(210,height);
+    button8.mousePressed(ChangeN);
+  button11 = createButton('UNDO');
+  button11.position(270,height);
+  button11.mousePressed(UndoNote);
+    button9 = createButton('Save');
+    button9.style("background-color", color(150,150,50));
+    button9.position(10,height);
+    button9.mousePressed(SaveTXT);
+    sly1 = createSlider(0, 0.5, 0.001,0.001);
+    sly1.position(450,height);
+    sly2 = createSlider(0, 1.5, 0.5,0.05);
+    sly2.position(570,height-20);
+    sly3 = createSlider(0, 0.8, 0.1,0.05);
+    sly3.position(690,height);
+    sly4 = createSlider(0, 1.5, 0.5,0.05);
+    sly4.position(810,height-20);
+    
+    //player1    
+    env = new p5.Env();
+    env.setADSR(0.001,0.5,0.1,0.5);//sly1.value(), sly2.value(), sly3.value(), sly4.value());
+    env.setRange(0.2, 0);
+    
+    wave = new p5.Oscillator('triangle');
+    //wave.setType('triangle');//sine triangle square sawtooth
+    wave.amp(env);
+    wave.start();
+    //wave.freq(440);
+//player2    
+    env2 = new p5.Env();
+    env2.setADSR(0.001,0.5,0.1,0.5);//sly1.value(), sly2.value(), sly3.value(), sly4.value());
+    env2.setRange(0.2, 0);
+    
+    wave2 = new p5.Oscillator('sine');
+    //wave2.setType('sine');//sine triangle square sawtooth
+    wave2.amp(env2);  
+    wave2.start();
+    //wave2.freq(440);
+  }
+  function draw() {
+    background(155);
+    for(var i= 0; i < tableNoteArr.length;i++) {
+    tableNoteArr[i].update();
+    }
+    musicComp.name = inp.value();
+// equal length note   
+    var ej = 0;var ej2 = 0;
+      for(var i = 0;i< musicComp.lenNIns1.length;i++) {
+        ej += musicComp.lenNIns1[i];
+      }
+      for(var i = 0;i< musicComp.lenNIns2.length;i++) {
+        ej2 += musicComp.lenNIns2[i];
+      }
+      text(ej +'= ' +ej2,10,height -60);
+//    
+    push();
+    textFont("Arial");
+    textSize(16);
+    text('A: '+sly1.value(),465,height-25);
+    text('D: '+sly2.value(),585,height-5);
+    text('S: '+sly3.value(),705,height-25);
+    text('R: '+sly4.value(),825,height-5);
+    pop();
+    
+    curX = round(mouseX/16)* 16;
+    curY = round(mouseY/4)* 4;
+    
+    millisecond = millis();
+//player1    
+    wave.freq(freqNote);//musicComp.freqNIns1[Ni]);
+    //env.setRange(0.2,slider.value());
+    //env.setADSR(sly1.value(), sly2.value(), sly3.value(), sly4.value());
+//player2    
+    wave2.freq(freqNote2);//musicComp.freqNIns2[Ni2]);
+    //env2.setADSR(sly1.value(), sly2.value(), sly3.value(), sly4.value());
+//player1 play   
+        if (Ni === musicComp.lenNIns1.length && millisecond > timer && playing) {
+          Ni = 0;
+          freqNote = midiToFreq(musicComp.freqNIns1[Ni]);
+          lengthNote = musicComp.lenNIns1[Ni];
+          if(musicComp.freqNIns1[Ni] !== 0) {
+            env.play();
+          }
+    timer = millisecond + musicComp.lenNIns1[Ni];//lengthNote * 1;
+          console.log(0);
+          Ni += 1;
+        } else if (millisecond > timer && playing) {
+          freqNote = midiToFreq(musicComp.freqNIns1[Ni]);
+          lengthNote = musicComp.lenNIns1[Ni];
+          if(musicComp.freqNIns1[Ni] !== 0) {
+            env.play();
+          }
+    timer = millisecond + musicComp.lenNIns1[Ni]*0.5;//lengthNote * 1;
+          console.log(1);
+          Ni += 1;
+        }
+//player2 play   
+    if (Ni2 === musicComp.lenNIns2.length && millisecond > timer2 && playing) {
+          Ni2 = 0;
+          freqNote2 = midiToFreq(musicComp.freqNIns2[Ni2]);
+          lengthNote2 = musicComp.lenNIns2[Ni2];
+          env2.play();
+    timer2 = millisecond + musicComp.lenNIns2[Ni2];//lengthNote2 *1;
+          console.log(3);
+          Ni2 += 1;
+        } else if (millisecond > timer2 && playing) {
+          freqNote2 = midiToFreq(musicComp.freqNIns2[Ni2]);
+          lengthNote2 = musicComp.lenNIns2[Ni2];
+          if(musicComp.freqNIns2[Ni2] !== 0) {
+            env2.play();
+          }
+    timer2 = millisecond + musicComp.lenNIns2[Ni2]* 0.5;//lengthNote2 * 1;
+          console.log(4);
+          Ni2 += 1;
+        }
+//player end
+    
+    for(var i = 0;i < tableNoteArr.length;i++) {
+      
+    if(mouseX >= 50 && mouseX <= width - 50 && mouseY >= tableNoteArr[i].y-30 && mouseY <= tableNoteArr[i].y + 120) {
+      //musicComp.heightNIns1.push(curY-i*200);
+      noteLit = 44-(curY-i*200)/4; 
+        if (pause) cursorN = text(imageNote[imageNum + 7] + dottedLit,curX,curY);
+        else cursorN = text(imageNote[imageNum] + dottedLit,curX,curY);
+        push();
+      textFont("Arial");
+      text(noteLitArr[noteLit]+sharpLit+noteNumArr[noteLit]+' '+(lenNote * dotted),curX+30,curY); //noteNumArr[noteLit+1] if sharp
+      pop();
+    }}
+  }
+  function mousePressed() {
+    for(var i = 0;i < tableNoteArr.length;i++) {
+      
+    if(mouseX >= 50 && mouseX <= width - 50 && mouseY >= tableNoteArr[i].y-30 && mouseY <= tableNoteArr[i].y + 120) {
+//space     
+    if(changeNote) {
+//changeNote
+      if(imageNum === 6) {
+      if(instr === 1) {
+          musicComp.lenNIns1[changeNoteNum] = (0);
+        
+          musicComp.heightNIns1[changeNoteNum] = (curY-i*200);
+          musicComp.freqNIns1[changeNoteNum] = (0);
+          musicComp.imageNIns1[changeNoteNum] = (imageNote[imageNum]);
+          
+      }else {
+          musicComp.lenNIns2[changeNoteNum] = (0);
+        
+          musicComp.heightNIns2[changeNoteNum] = (curY-i*200);
+          musicComp.freqNIns2[changeNoteNum] = (0);
+          musicComp.imageNIns2[changeNoteNum] = (imageNote[imageNum]);
+          
+      }
+//note      
+    }else{
+        if(instr === 1) {          //instr 1            
+          musicComp.lenNIns1[changeNoteNum] = (lenNote * dotted);//--
+        if(pause) {
+          musicComp.heightNIns1[changeNoteNum] = (1);
+          musicComp.freqNIns1[changeNoteNum] = (0);
+          musicComp.imageNIns1[changeNoteNum] = (imageNote[imageNum+7]) + dottedLit;//--
+        }else{
+          musicComp.heightNIns1[changeNoteNum] = (curY-i*200);
+          if(sharp) {                                                            //sharp
+            musicComp.freqNIns1[changeNoteNum] = (noteNumArr[noteLit + 1]);
+          }else{
+            musicComp.freqNIns1[changeNoteNum] = (noteNumArr[noteLit]);
+          }
+          musicComp.imageNIns1[changeNoteNum] = sharpLit +(imageNote[imageNum]) + dottedLit;//--
+          }
+          
+      }else {                      //instr 2
+          musicComp.lenNIns2[changeNoteNum] = (lenNote * dotted);//--
+        if(pause) {
+          musicComp.heightNIns2[changeNoteNum] = (1);
+          musicComp.freqNIns2[changeNoteNum] = (0);
+          musicComp.imageNIns2[changeNoteNum] = (imageNote[imageNum+7]) + dottedLit;//--
+        }else{
+          musicComp.heightNIns2[changeNoteNum] = (curY-i*200);
+          if(sharp) {                                                            //sharp
+            musicComp.freqNIns2[changeNoteNum] = (noteNumArr[noteLit + 1]);
+          }else{
+            musicComp.freqNIns2[changeNoteNum] = (noteNumArr[noteLit]);
+          }
+          musicComp.imageNIns2[changeNoteNum] = sharpLit +(imageNote[imageNum]) + dottedLit;//--
+          }
+      }}
+//changeNote end      
+       }else{
+    if(imageNum === 6) {
+      if(instr === 1) {
+          musicComp.lenNIns1.push(0);
+        
+          musicComp.heightNIns1.push(curY-i*200);
+          musicComp.freqNIns1.push(0);
+          musicComp.imageNIns1.push(imageNote[imageNum]);
+          
+      }else {
+          musicComp.lenNIns2.push(0);
+        
+          musicComp.heightNIns2.push(curY-i*200);
+          musicComp.freqNIns2.push(0);
+          musicComp.imageNIns2.push(imageNote[imageNum]);
+          
+      }
+//note      
+    }else{
+        if(instr === 1) {          //instr 1            
+          musicComp.lenNIns1.push(lenNote * dotted);//--
+        if(pause) {
+          musicComp.heightNIns1.push(1);
+          musicComp.freqNIns1.push(0);
+          musicComp.imageNIns1.push(imageNote[imageNum+7] + dottedLit);//--
+        }else{
+          musicComp.heightNIns1.push(curY-i*200);
+          if(sharp) {                                          //sharp
+            musicComp.freqNIns1.push(noteNumArr[noteLit + 1]);
+          }else{
+            musicComp.freqNIns1.push(noteNumArr[noteLit]);
+          }
+          musicComp.imageNIns1.push(sharpLit +imageNote[imageNum]+ dottedLit);//--
+          }
+          
+      }else {                      //instr 2
+          musicComp.lenNIns2.push(lenNote * dotted);//--
+        if(pause) {
+          musicComp.heightNIns2.push(1);
+          musicComp.freqNIns2.push(0);
+          musicComp.imageNIns2.push(imageNote[imageNum+7] + dottedLit);//--
+        }else{
+          musicComp.heightNIns2.push(curY-i*200);
+          if(sharp) {                                          //sharp
+            musicComp.freqNIns2.push(noteNumArr[noteLit + 1]);
+          }else{
+            musicComp.freqNIns2.push(noteNumArr[noteLit]);
+          }
+          musicComp.imageNIns2.push(sharpLit + imageNote[imageNum] + dottedLit);//--
+          }
+      }}
+    }
+    }
+    }
+  }
+  function PauseN() {
+    if(pause) {
+      pause = false; 
+      button.html('NOTE');
+    } else {
+      pause = true; 
+      button.html('PAUSE');
+    }
+  }
+  function SizeN() {
+    if(lenNote > 125) lenNote /= 2; 
+    else lenNote = 8000; 
+    
+    if(lenNote < 250) button2.html("space");
+    else button2.html("SIZE 1/" + 8000/lenNote);
+    
+    if(imageNum < 6) imageNum += 1;
+    else imageNum = 0;
+  }
+  function NextIns() {
+    if(instr === 1) {
+      instr = 2;      
+    }else{
+      instr = 1;
+    }
+      button3.html('Ins ' + instr);
+  }
+  function PlayComp() {
+    if(!playing) {
+      playing = true;
+      button4.html('&#9632;')
+    }else{
+      playing = false;
+      button4.html('&#9654;')
+      Ni = 0;
+      Ni2 = 0;
+                   }
+  }
+  function Sharp() {
+    if(!sharp) {
+      sharp = true;
+      sharpLit = '#';
+    }else{
+      sharp = false;
+      sharpLit = ' ';
+    }
+  }
+  function ChangeN() {
+    if (!changeNote) { 
+      button8.style("background-color", color(250,50,50));
+      changeNote = true;
+    }else{
+      button8.style("background-color", color(250,250,250));
+      changeNote = false;
+    }
+    //var changeNote = false;
+    //var changeNoteNum = 0;
+  }
+  function ChangeNRight() {
+    changeNoteNum += 1;
+    if(xCN > tableNoteArr[0].lenString-2) {
+      xCN = 0; yCN += 200;
+    }else {
+      xCN += 1;
+    }
+    console.log(xCN,yCN);
+  }
+  function ChangeNLeft() {
+    if(changeNoteNum > 0)changeNoteNum -= 1;
+    
+    if(xCN < 1) {
+      xCN = tableNoteArr[0].lenString-1; yCN -= 200;
+    }else {
+      xCN -= 1;
+    } 
+    console.log(xCN,yCN);
+  }
+  function SaveTXT() {
+    //let list = split(words, '');
+//    var MC = musicComp.freqNIns1 + musicComp.lenNIns1 + musicComp.freqNIns2 + musicComp.lenNIns2;
+//         saveStrings(MC, 'music_comp.txt');
+      json = {};
+        json.name = inp.value();
+        json.freqNIns1 =   musicComp.freqNIns1;  
+        json.lenNIns1 =    musicComp.lenNIns1;   
+        json.heightNIns1 = musicComp.heightNIns1;
+        json.imageNIns1 =  musicComp.imageNIns1; 
+        json.freqNIns2 =   musicComp.freqNIns2;  
+        json.lenNIns2 =    musicComp.lenNIns2;
+        json.heightNIns2 = musicComp.heightNIns2;
+        json.imageNIns2 =  musicComp.imageNIns2;
+        save(json, 'music_comp.json');
+  }
+  function Dotting() {
+    if(dotted === 1) {
+      dotted = 1.5;
+      dottedLit = '.';
+      button10.html('dott  ' + dottedLit);
+    }else if(dotted === 1.5) {
+      dotted = 1.75;
+      dottedLit = '..';
+      button10.html('dott  ' + dottedLit);
+    }else if(dotted === 1.75){
+      dotted = 1.875;
+      dottedLit = '...';
+      button10.html('dott  ' + dottedLit);
+    }else {
+      dotted = 1;
+      dottedLit = '';
+      button10.html('dotted');
+    }
+  }
+  function UndoNote() {
+    if(instr === 1) {
+      musicComp.freqNIns1.pop();  
+      musicComp.lenNIns1.pop();   
+      musicComp.heightNIns1.pop();
+      musicComp.imageNIns1.pop(); 
+    }else{
+      musicComp.freqNIns2.pop();  
+      musicComp.lenNIns2.pop();   
+      musicComp.heightNIns2.pop();
+      musicComp.imageNIns2.pop(); 
+    }
+  }
+  function keyPressed() {
+    if (keyCode === UP_ARROW) {
+          
+    }
+    if (keyCode === DOWN_ARROW) {
+      if(lenNote > 125) lenNote /= 2; 
+      else lenNote = 8000; 
+    
+      if(lenNote < 250) button2.html("space");
+      else button2.html("SIZE 1/" + 8000/lenNote);
+    
+      if(imageNum < 6) imageNum += 1;
+      else imageNum = 0;             
+    }
+  }
+  
+//  button.html("pause");//("stop");
+</script>    
+  </div>
+<!--
+  <div id="code">&#9992;&#9773;&#9833; &#9834;&#9835;&#9836;
+&#9837;&#9838;&#9839; &#8656;&#8657;&#8658;&#8659;&#9650;&#9654;&#9660;&#9664;&#9204;&#9205;&#9208;&#1520;
+
+</div>
+-->
+</body>
+
+</html>
