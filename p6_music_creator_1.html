@@ -103,6 +103,8 @@
     }
     
   }
+  
+  //var musicComp = 
   var musicComp  = {
     name: '',
     freqNIns1: [],
@@ -145,7 +147,7 @@
   var dottedLit = '';
   
 function preload() {
-  myFont = loadFont('image/otf/OPUSTEXT.TTF');
+  myFont = loadFont('fonts/OPUSTEXT.TTF');
 }
   function setup() {
     createCanvas(innerWidth, innerHeight*0.95);
@@ -519,7 +521,7 @@ function preload() {
         json.lenNIns2 =    musicComp.lenNIns2;
         json.heightNIns2 = musicComp.heightNIns2;
         json.imageNIns2 =  musicComp.imageNIns2;
-        save(json, 'music_comp.json');
+        save(json, inp.value()+ '.json');
   }
   function Dotting() {
     if(dotted === 1) {
