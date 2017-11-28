@@ -131,7 +131,7 @@
   var imageNum = 0;
     var curX;
     var curY;
-  var button,button2,button3,button4,button5,button6,button7,button8,button9,button10,button11,inp;
+  var button,button2,button3,button4,button5,button6,button7,button8,button9,button10,button11,button12,button13,inp;
   var instr = 1;
   var playing = false;
   var sharp = false;
@@ -145,13 +145,19 @@
   var Ni2 = 0;
   var dotted = 1;
   var dottedLit = '';
+  var typeWave = 'triangle';
+  var recording = false;
+  var recorder, soundFile;
   
 function preload() {
   myFont = loadFont('fonts/OPUSTEXT.TTF');
 }
   function setup() {
     createCanvas(innerWidth, innerHeight*0.95);
-    //frameRate(6);
+    
+  recorder = new p5.SoundRecorder();
+  recorder.setInput();//mic
+  soundFile = new p5.SoundFile();
     
     for(var i =0;i < height/260;i++) {      
       var tableNote = new tableNotes(48,48+i*200);
@@ -160,54 +166,65 @@ function preload() {
     textFont(myFont);
     textSize(30);
   button = createButton('NOTE');
-  button.position(10,height-20);
+  button.position(10,height-40);
   button.mousePressed(PauseN);
     button2 = createButton('SIZE 1/1');
-    button2.position(70,height-20);
+    button2.position(70,height-40);
     button2.mousePressed(SizeN);
   button10 = createButton('dotting');
-  button10.position(70,height);
+  button10.position(70,height-20);
   button10.mousePressed(Dotting);
     button3 = createButton('Ins 1');
-    button3.position(140,height-20);
+    button3.position(140,height-40);
     button3.mousePressed(NextIns);
   button5 = createButton('#');
-  button5.position(190,height-20);
+  button5.position(190,height-40);
   button5.mousePressed(Sharp);
     inp =createInput('TITLE');
-    inp.position(230, height-20);
+    inp.position(230, height-40);
      button4 = createButton('&#9654;');//&#9654;&#1520;
-     button4.position(410,height-20);
+     button4.position(410,height-40);
      button4.mousePressed(PlayComp);
   button6 = createButton('&#8656;');//&#8656;&#8658;
-  button6.position(150,height);
+  button6.position(150,height-20);
   button6.mousePressed(ChangeNLeft);
      button7 = createButton('&#8658;');//&#8656;&#8658;
-     button7.position(180,height);
+     button7.position(180,height-20);
      button7.mousePressed(ChangeNRight);
     button8 = createButton('Change');
     button8.style("background-color", color(250,250,250));
-    button8.position(210,height);
+    button8.position(210,height-20);
     button8.mousePressed(ChangeN);
   button11 = createButton('UNDO');
-  button11.position(270,height);
+  button11.position(270,height-20);
   button11.mousePressed(UndoNote);
-    button9 = createButton('Save');
+    button9 = createButton('JSON');
     button9.style("background-color", color(150,150,50));
-    button9.position(10,height);
+    button9.position(10,height-20);
     button9.mousePressed(SaveTXT);
+  button12 = createButton(typeWave);
+  button12.position(530,height-85);
+  button12.mousePressed(SetTypeWave);
+    button13 = createButton("RECORD");
+   button13.style("background-color", color(250,250,250));
+  button13.position(520,height-20);
+ button13.mousePressed(RecordWav);
     sly1 = createSlider(0, 0.5, 0.001,0.001);
-    sly1.position(450,height);
+    sly1.position(550,height-80);
+    sly1.style("rotate", -90);
     sly2 = createSlider(0, 1.5, 0.5,0.05);
-    sly2.position(570,height-20);
+    sly2.position(570,height-80);
+    sly2.style("rotate", -90);
     sly3 = createSlider(0, 0.8, 0.1,0.05);
-    sly3.position(690,height);
+    sly3.position(590,height-80);
+    sly3.style("rotate", -90);
     sly4 = createSlider(0, 1.5, 0.5,0.05);
-    sly4.position(810,height-20);
+    sly4.position(610,height-80);
+    sly4.style("rotate", -90);
     
     //player1    
     env = new p5.Env();
-    env.setADSR(0.001,0.5,0.1,0.5);//sly1.value(), sly2.value(), sly3.value(), sly4.value());
+    env.setADSR(sly1.value(), sly2.value(), sly3.value(), sly4.value());//0.001,0.5,0.1,0.5);//
     env.setRange(0.2, 0);
     
     wave = new p5.Oscillator('triangle');
@@ -245,10 +262,11 @@ function preload() {
     push();
     textFont("Arial");
     textSize(16);
-    text('A: '+sly1.value(),465,height-25);
-    text('D: '+sly2.value(),585,height-5);
-    text('S: '+sly3.value(),705,height-25);
-    text('R: '+sly4.value(),825,height-5);
+    text('TypeWave:', 450,height -70);
+    text('A: '+sly1.value(),465,height-50);
+    text('D: '+sly2.value(),465,height-35);
+    text('S: '+sly3.value(),465,height-20);
+    text('R: '+sly4.value(),465,height-5);
     pop();
     
     curX = round(mouseX/16)* 16;
@@ -258,7 +276,7 @@ function preload() {
 //player1    
     wave.freq(freqNote);//musicComp.freqNIns1[Ni]);
     //env.setRange(0.2,slider.value());
-    //env.setADSR(sly1.value(), sly2.value(), sly3.value(), sly4.value());
+    env.setADSR(sly1.value(), sly2.value(), sly3.value(), sly4.value());
 //player2    
     wave2.freq(freqNote2);//musicComp.freqNIns2[Ni2]);
     //env2.setADSR(sly1.value(), sly2.value(), sly3.value(), sly4.value());
@@ -568,6 +586,38 @@ function preload() {
     
       if(imageNum < 6) imageNum += 1;
       else imageNum = 0;             
+    }
+  }
+  function SetTypeWave() {
+    if(typeWave == 'sine') {
+      typeWave = 'triangle';
+      button12.html('triangle');
+    } else if (typeWave == 'triangle') {
+      typeWave = 'square';
+      button12.html('square');
+    } else if (typeWave == 'square') {
+      typeWave = 'sawtooth';
+      button12.html('sawtooth');
+    } else {
+      typeWave = 'sine';
+      button12.html('sine');
+    }
+    wave.stop();
+      wave = new p5.Oscillator(typeWave);
+    wave.amp(env);
+    wave.start();
+  }//sine triangle square sawtooth
+  function RecordWav() {
+    if(!recording) {
+      button13.style("background-color", color(250,50,50));
+      recording = true;
+      recorder.record(soundFile);
+    } else {
+      button13.style("background-color", color(250,250,250));
+      recording = false;
+      recorder.stop();
+      //soundFile.play(); // play the result!
+      saveSound(soundFile, inp.value() + '.wav');
     }
   }
   
