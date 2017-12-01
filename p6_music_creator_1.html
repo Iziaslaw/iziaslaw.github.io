@@ -125,7 +125,7 @@
   var noteNumArr = [24,26,28,29,31, 33, 35, 36, 38, 40, 41, 43, 45, 47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86, 88, 89, 91, 93, 95];
   var noteLitArr = ['C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B'];
   var noteLit;
-  var lenNote = 8000;
+  var lenNote = 4000;
   var pause = false;
   var imageNote = ['w','h','q','e','x','y','O','1','2','3','4','5','6','O'];
   var imageNum = 0;
@@ -209,7 +209,7 @@ function preload() {
    button13.style("background-color", color(250,250,250));
   button13.position(520,height-20);
  button13.mousePressed(RecordWav);
-    sly1 = createSlider(0, 0.5, 0.001,0.001);
+    sly1 = createSlider(0.001, 0.5, 0.001,0.001);
     sly1.position(550,height-80);
     sly1.style("rotate", -90);
     sly2 = createSlider(0, 1.5, 0.5,0.05);
@@ -257,7 +257,7 @@ function preload() {
       for(var i = 0;i< musicComp.lenNIns2.length;i++) {
         ej2 += musicComp.lenNIns2[i];
       }
-      text(ej +'= ' +ej2,10,height -60);
+      text(ej +'ms= ' +ej2+'ms',10,height -60);
 //    
     push();
     textFont("Arial");
@@ -331,8 +331,12 @@ function preload() {
         else cursorN = text(imageNote[imageNum] + dottedLit,curX,curY);
         push();
       textFont("Arial");
-      text(noteLitArr[noteLit]+sharpLit+noteNumArr[noteLit]+' '+(lenNote * dotted),curX+30,curY); //noteNumArr[noteLit+1] if sharp
-      pop();
+      if (lenNote < 100) {
+        text(noteLitArr[noteLit]+sharpLit+noteNumArr[noteLit]+' SPACE',curX+30,curY); //noteNumArr[noteLit+1] if sharp
+      }else{
+        text(noteLitArr[noteLit]+sharpLit+noteNumArr[noteLit]+' '+(lenNote * dotted),curX+30,curY);
+      }
+        pop();
     }}
   }
   function mousePressed() {
@@ -458,11 +462,11 @@ function preload() {
     }
   }
   function SizeN() {
-    if(lenNote > 125) lenNote /= 2; 
-    else lenNote = 8000; 
+    if(lenNote > 100) lenNote /= 2; 
+    else lenNote = 4000; 
     
-    if(lenNote < 250) button2.html("space");
-    else button2.html("SIZE 1/" + 8000/lenNote);
+    if(lenNote < 125) button2.html("space");
+    else button2.html("SIZE 1/" + 4000/lenNote);
     
     if(imageNum < 6) imageNum += 1;
     else imageNum = 0;
@@ -575,14 +579,21 @@ function preload() {
   }
   function keyPressed() {
     if (keyCode === UP_ARROW) {
-          
+      if(lenNote < 4000) lenNote *= 2; 
+      else lenNote = 62.5; 
+    
+      if(lenNote < 125) button2.html("space");
+      else button2.html("SIZE 1/" + 4000/lenNote);
+    
+      if(imageNum > 0) imageNum -= 1;
+      else imageNum = 6;     
     }
     if (keyCode === DOWN_ARROW) {
-      if(lenNote > 125) lenNote /= 2; 
-      else lenNote = 8000; 
+      if(lenNote > 100) lenNote /= 2; 
+      else lenNote = 4000; 
     
-      if(lenNote < 250) button2.html("space");
-      else button2.html("SIZE 1/" + 8000/lenNote);
+      if(lenNote < 125) button2.html("space");
+      else button2.html("SIZE 1/" + 4000/lenNote);
     
       if(imageNum < 6) imageNum += 1;
       else imageNum = 0;             

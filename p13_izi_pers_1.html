@@ -142,8 +142,10 @@ endShape(CLOSE);
       
       function draw() {
         background(100);
-        
-        text('<'+image+'>',10,height-30);
+        push();
+        textSize(20);
+        text('<'+image+'>',10,height-20);
+        pop();
 //      words = 'imageArr[] = { name:"'+inp.value()+'",  image: [[' + vertAll[0]+'],[' + vertAll[1] + '],[' + vertAll[2] + '],[' + vertAll[3]+'],[' + vertAll[4] + '],[' + vertAll[5] + '],[' + vertAll[6] + '],[' + vertAll[7] + '],[' + vertAll[8]+'],[' + vertAll[9] + '],[' + vertAll[10] + '],[' + vertAll[11]+'],[' + vertAll[12] + '],[' + vertAll[13] + '],[' + vertAll[14]+'],[' + vertAll[15] + '],[' + vertAll[16] + '],[' + vertAll[17]+'],[' + vertAll[18] + '],[' + vertAll[19] + ']],  color:'+' [[' + colorAll[0]+'],[' + colorAll[1] + '],[' + colorAll[2] + '],[' + colorAll[3]+'],[' + colorAll[4] + '],[' + colorAll[5] + '],[' + colorAll[6] + '],[' + colorAll[7] + '],[' + colorAll[8]+'],[' + colorAll[9] + '],[' + colorAll[10] + '],[' + colorAll[11]+'],[' + colorAll[12] + '],[' + colorAll[13] + '],[' + colorAll[14]+'],[' + colorAll[15] + '],[' + colorAll[16] + '],[' + colorAll[17]+'],[' + colorAll[18] + '],[' + colorAll[19] + ']]}';
 //        div.html(words);
         var col = color('rgba('+sly.value()+','+sly2.value()+','+sly3.value()+','+sly4.value()+')');
@@ -259,7 +261,7 @@ if(moving) {
         json.name = inp.value();
         json.image = vertAll;
         json.color = colorAll;
-        save(json, 'lion.json');
+        save(json, inp.value()+'.json');
       }
       function PointsMove() {
         pointsMove = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]];
