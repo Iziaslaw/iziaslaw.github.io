@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>chebu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
+<!--  <script type="text/javascript" src="lib/p5.min.js"></script>-->
+  <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+  <script type="text/javascript" src="lib/p5.sound.min.js"></script>
+
+  <!--    <script type="text/javascript" src="js/main.js"></script>-->
+<style>
+  body {
+    background: #aabbcc;
+    margin: 0;
+    padding: 0;
+  }
+  
+</style>
+
+  </head>
+  <body>
+    <script>
+let angle = 0;     
+let sly1, sly2, sly3; 
+let move = 0;
+let moving = false; 
+let musPlay = false;      
+let a;      
+ let num = 0;
+      
+function preload() {
+  a = loadSound('audio/accord.mp3')
+  
+}
+function setup() {
+  createCanvas(1024, 720, WEBGL);
+  sly1 = createSlider(0,7,1,0.01);
+  sly2 = createSlider(0,7,0,0.01);
+  sly3 = createSlider(0,7,0.2,0.01);
+}
+
+function draw() {
+  
+  background(155);
+    
+  pointLight(255,255,255,-255,0,0);
+  
+  
+  translate(0, 0, 0);
+  push();
+  rotateX(sly1.value());//angle);//PI/2);
+  rotateY(sly2.value());//angle * 0.3);
+  rotateZ(sly3.value());//angle * 1.2);
+  ambientMaterial(255,0,0);
+  translate(0,10,-40- move/2);
+  box(30,10,10);
+  
+  translate(-10,12,-50- move*2);
+  ambientMaterial(51, 67, 7);
+  cylinder(15,6);
+  pop();
+  //rotateX(QUARTER_PI);
+  rotateX(sly1.value());//angle);//PI/2);
+  rotateY(sly2.value());//angle * 0.3);
+  rotateZ(sly3.value());//angle * 1.2);
+  ambientMaterial(0,200,0);
+  cylinder(70, 20);
+  ambientMaterial(255, 0, 0);
+  translate(20,10,20);
+  cylinder(10,10);
+  translate(-40,0,0);
+  cylinder(10,10);
+  
+  translate(20,0,-50);
+  box(30,10,10);
+  
+  ambientMaterial(12, 111, 54);
+  translate(80,-20,40);
+  cylinder(40,10);
+  translate(-160,0,0);
+  cylinder(40,10);
+  
+  translate(80,10,-110);//body
+  ambientMaterial(50, 100, 150);
+  box(60,24,80);
+  
+  translate(-10,15,0);
+  ambientMaterial(183, 123, 9);
+  cylinder(30, 10);
+  translate(30,0,10);
+  cylinder(20,10);
+  
+  
+  push();
+  rotateY(-PI/8);
+  translate(20,0,0);
+  box(80,6,14);
+  translate(40,0,0);
+  ambientMaterial(121,82,9);
+  box(10,8,18);
+  
+  translate(-20,6,-10);
+  ambientMaterial(51,67,7);
+  cylinder(15,6);
+  pop();
+  
+  translate(-40,-10,-80);
+  ambientMaterial(51, 67, 7);
+  cylinder(15,6);
+  translate(40,0,0);
+  cylinder(15,6);
+  
+  noStroke();
+  
+  push();
+  translate(0,0,-30);
+
+  ambientMaterial(255);
+  plane(800,800);
+  pop();
+  
+  angle += 0.01;
+  
+  if (frameCount % 180 == 0) {
+      musPlay = true;
+    
+      num = round(random(0,13))* 8;      
+      a.jump(num);
+    } 
+  if((frameCount + 30) % 180 == 0) {
+      musPlay = false;
+      a.stop();
+    }
+  
+  if(musPlay) {
+    if(move < 10) move += 0.5;
+    else move = 10
+  } else if (!musPlay){
+    if(move > 0) move -= 0.5;
+    else move = 0;
+  }
+} 
+      
+function keyPressed() {
+    if (key == 'A' || key == 'a') {
+      musPlay = true;
+      num = round(random(0,13))* 8;
+      console.log(num);
+      a.jump(num,5);
+      
+    }
+  }
+function keyReleased() {
+    musPlay = false;
+  a.stop();
+  }
+     
+    </script>
+  </body>
+</html>  
