@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>izigario_001</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="lib/p5.min.js"></script>
+    <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+<!--    <script type="text/javascript" src="bib/p5.sound.js"></script>-->
+<!--    <script type="text/javascript" src="bib/jquery-3.1.1.js"></script>-->
+
+<style>
+  body {
+    padding: 0; margin: 0;    
+  }  
+</style>
+
+  </head>
+  <body>
+    <script>
+function compareNumeric(a,b) {
+  return a.r - b.r;
+}    
+      
+let bubbles = [];
+let leadersB = [];      
+let numberBubble = 40;      
+      
+function setup() {
+  createCanvas(windowWidth * 0.9, windowHeight * 0.9);
+  for (let i= 0; i < numberBubble; i++) {
+    let x =random(width);
+    let y = random(height);
+    let r = random(5, 8);
+    bubbles[i] = new Bubble(x,y,r,i+1);
+  } 
+}
+
+function draw() {  
+  background(0);
+  
+  for (let z = 0; z < bubbles.length; z++) {
+    bubbles[z].show();
+    bubbles[z].move();
+    bubbles[z].update();
+    let overlapping = false;
+    for (let other = 0; other < bubbles.length; other++) {
+      if (bubbles[z] !== bubbles[other] && bubbles[z].intersects(bubbles[other])) {
+        //z.changeColor(250);
+        overlapping = true;
+        numberBubble += 1;
+        if (bubbles[z].r < bubbles[other].r) {
+          //eat = true;
+        let x =random(width);
+        let y = random(height);
+        let r = random(5, 8);
+        bubbles.splice(z,1);
+        bubbles.push(new Bubble(x,y,r,numberBubble));
+        }
+      } 
+    }
+    if (overlapping) {
+      bubbles[z].changeColor();
+
+      bubbles[z].r += 1;
+    } else {
+      bubbles[z].r -= 0.001;
+    }
+  }
+  if(frameCount % 120 == 0) {
+    bubbles.sort(compareNumeric);
+    bubbles.reverse();
+  }
+    for(let i = 0; i < 10; i++) {
+      textSize(20);
+      textAlign(LEFT);
+      fill(255,0,0);
+      text('№'+ bubbles[i].number + ' *'+ floor((bubbles[i].r*3)),width - 150,50+30*i);
+    }  
+}      
+      
+class Bubble {
+  constructor(x,y,r=50,number) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.number = number;
+    
+    this.shape = floor(random(0,3));
+    this.red = random(10,240);
+    this.green = random(10,240);
+    this.blue = random(10,240);
+    this.brightness = color(this.red, this.green,this.blue);
+    this.brightness1 = color(this.red, this.green,this.blue);
+    this.brightness2 = color(this.blue,this.red,this.green);
+    this.vecX = 0;
+    this.vecY = 0;
+  }
+  
+  intersects(other) {
+  let d = dist(this.x, this.y, other.x, other.y);
+    return (d < this.r*2 + other.r*2);
+  }
+  
+  changeColor(bright) {
+    if (this.brightness == this.brightness1) {
+      this.brightness = this.brightness2;
+    } else {
+      this.brightness = this.brightness1;
+    }
+    
+  }
+
+  update() {
+    if (this.r < 10) {
+      this.r = 10;
+    } else if (this.r > 100) {
+      this.r = 100;
+    }
+  }
+  
+  move() {
+    if(this.x > width + this.r*3) {
+      this.x = -this.r*3;
+    } else if (this.x < -this.r*3) {
+      this.x = width + this.r*3;
+    }
+    if(this.y > height + this.r*3) {
+      this.y = -this.r*3;
+    } else if (this.y < -this.r*3) {
+      this.y = height + this.r*3;
+    }
+    
+    
+    if (frameCount % 60 == 0) {
+      this.vecX = random(-2,2);
+      this.vecY = random(-2,2);
+    }
+    this.x += this.vecX;
+    this.y += this.vecY;
+
+  }
+  
+  show() {
+    stroke(255);
+    strokeWeight(2);
+    fill(this.brightness, 125);
+    if (this.shape == 0) {
+    ellipse(this.x, this.y, this.r * 3);
+    } else if (this.shape == 1) {
+      rectMode(CENTER);
+      rect(this.x,this.y,this.r * 3,this.r * 3);
+    } else {
+      triangle(this.x - this.r * 2.4,this.y - this.r * 1.2,this.x + this.r * 2.4,this.y - this.r * 1.2,this.x,this.y + this.r * 2.4);
+    }
+    textAlign(CENTER);
+    textSize(this.r);
+    fill(255,0,0);
+    text('№' +this.number,this.x ,this.y );
+    text('*' + floor(this.r*3),this.x ,this.y + this.r);
+    }
+}            
+
+    </script>
+  </body>
+</html>  
