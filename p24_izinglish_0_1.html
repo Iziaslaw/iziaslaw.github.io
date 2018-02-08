@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>izinglish_0.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->
+  <script type="text/javascript" src="lib/p5.min.js"></script>
+  <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+  <script type="text/javascript" src="lib/p5.sound.min.js"></script>
+
+<!--      <script type="text/javascript" src="bib/jquery-3.1.1.min.js"></script>-->
+<style>
+  body {
+    background: #aabbcc;
+    margin: 0;
+    padding: 0;
+  }
+  #dictionary {
+    display: none;
+  }
+</style>
+
+  </head>
+  <body>
+     <div><p id="dictionary"></p></div>
+    <script>
+//      var s = ('#dictionary').join(',');//document.getElementById('dictionary');
+//var ss = s.split("-");
+//for (var i in ss) {
+//    document.write(ss[i]);
+//    document.write("<br/>");
+//}
+      
+let diry = ''; 
+let diry1 = [];
+let diry2 = [];
+      
+let numA = ['ЩА','НАЧНЁМ!'], numB;
+      
+function preload() {
+  diry = loadStrings('p24_izinglish_diry.txt')
+  
+}
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  
+  //diry = document.getElementById('dictionary').innerHTML;
+  //diry1 = diry.split('\n');
+  for(let i = 0;i < diry.length; i++) {
+//    diry2.push(diry1[i].split('-'));
+//    diry1[i] = diry1[i].split('-');
+    diry[i] = diry[i].split('-');
+  }
+  //diry.style.background = 'red';
+}
+
+function draw() {
+  
+  background(155);
+    if(frameCount % 60 == 0) {
+      numA = random(diry);
+      //numA= random(diry1);
+    }
+  textAlign(CENTER);
+  stroke(255);
+  textSize(100);
+  fill(255,50,50);
+  text('<'+numA[0]+'>', width/2, height/2 - 40);
+  textSize(30);
+  fill(50,50,255);
+  text('*'+numA[1]+'*', width/2, height/2 + 40);
+} 
+      
+function keyPressed() {
+    if (key == 'A' || key == 'a') {
+      
+      
+    }
+  }
+function keyReleased() {
+    
+  }
+     
+    </script>
+  </body>
+</html>  
