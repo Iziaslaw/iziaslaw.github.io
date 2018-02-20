@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>animation_text</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->
+    <script type="text/javascript" src="lib/p5.min.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>-->
+    <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+<!--    <script type="text/javascript" src="bib/p5.sound.js"></script>-->
+<!--    <script type="text/javascript" src="bib/jquery-3.1.1.js"></script>-->
+
+<style>
+  body {
+    padding: 0; margin: 0;
+    font-size: 16px;
+  }    
+  input {
+    border:1px solid hsla(0,0%,78%,.15);
+    font-family: Arial;
+    font-size: 2.25em;
+    width: 7.7em;
+  }
+  input:focus {
+    color:#ED225D;
+    outline-color:#3796D1;
+    outline-width: 1px;
+    outline-style: solid;
+}
+</style>
+
+  </head>
+  <body>
+    <div id="canvas"></div>
+
+    <script>
+      function CreateText() {
+        let contArr = content.split('');
+        for(let i = 0; i < contArr.length; i++) {
+          let contLit = contArr[i];
+          let halfWord = contArr.length / 2;
+          let wLit = round(width / (contArr.length + 2));
+          let x = (width/2 - (halfWord * wLit)+wLit*0.5) + i * (wLit);
+          let y = height / 2;
+          textArr.push(new TextLit(x,y,contLit,wLit));
+        }
+        
+      }
+function TextLit(x,y,contLit,wLit) {
+      this.lit = contLit;
+      this.x = x;
+      this.y = y;
+      this.w = wLit;
+      this.angle = 0;
+      this.startTimeLit = round(random(5,60));
+      this.movingLit = false;
+      this.transparancy = 255;
+      this.r = round(random(10,240));
+      this.g = round(random(10,240));
+      this.b = round(random(10,240));
+  this.update = function() {
+    if(moving && frameCount == startTime + this.startTimeLit) {
+      this.movingLit = true;
+    }else if (!moving){
+      this.movingLit = false;
+    }
+    if(this.movingLit)  {
+      this.angle += 0.1;
+      this.y += 1;
+      this.w -= 0.5;
+      this.transparancy -= 1;
+      if(this.y > height - 200) {
+        this.lit = '';
+      }
+      if(this.y > height) {
+        moving = false;
+        console.log('moving = false');
+      }
+    }
+  }
+  this.show = function() {
+    push();
+    translate(this.x,this.y);
+    fill(this.r,this.g,this.b,this.transparancy);
+    rotate(this.angle);
+    textAlign(CENTER,CENTER);
+    textSize(this.w);
+    text(this.lit, 0, 0);
+    pop();
+  }
+}    
+      
+let textArr = []; 
+let content = 'IZIASLAW';  
+let moving = false;
+let button;      
+let startTime = 0; 
+let inp;      
+function setup() {
+  let canvasP5 = createCanvas(windowWidth * 0.9, windowHeight * 0.9);
+  canvasP5.parent('canvas');
+
+  inp = createInput('IZIASLAW');
+  inp.input(myInput);
+  button = createButton('Start!');
+  button.mousePressed(ChangeCont);
+  
+  CreateText();
+}
+
+function draw() {  
+  background(55);
+   
+  for(let i of textArr) {
+    i.update();
+    i.show();
+    
+  }
+  
+  
+  
+  if (keyIsDown(LEFT_ARROW)) {
+    
+  } else { }
+
+  if (keyIsDown(RIGHT_ARROW)) {
+    
+  } else { }
+
+  if (keyIsDown(UP_ARROW)) {
+    
+  }
+
+  if (keyIsDown(DOWN_ARROW)) {
+    
+  }
+} 
+function myInput() {
+  textSize(36);
+  content = this.value();
+  let cWidth = textWidth(this.value());
+  inp.size(cWidth + 50);
+  textArr.length = 0;
+  CreateText();
+}      
+function ChangeCont() {
+  if(moving) {
+    moving = false;
+  }else {
+    moving = true;
+    startTime = frameCount;
+  }
+}      
+
+    </script>
+  </body>
+</html>  

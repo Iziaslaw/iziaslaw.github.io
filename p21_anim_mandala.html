@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>mandala_1</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->
+    <script type="text/javascript" src="lib/p5.min.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>-->
+    <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+    <script type="text/javascript" src="lib/p5.sound.min.js"></script>
+<!--    <script type="text/javascript" src="bib/jquery-3.1.1.js"></script>-->
+
+    <!--    <script type="text/javascript" src="js/main.js"></script>-->
+<style>
+  body {
+    
+    font-size: 16px;
+  }  
+  div {
+    background-color: currentColor;
+    margin: auto;
+    border: 12px solid rgb(157, 87, 43);
+    border-style: ridge;
+  }
+</style>
+
+  </head>
+  <body>
+    <script>
+    
+function Mandala(x,y) {
+  this.arr = [];
+  this.numM = 20;
+  this.x = x;
+  this.y = y;
+  this.rotate = 0;
+  this.red = random(20,200);
+      this.green = random(20,200);
+      this.blue = random(20,200);
+      this.alpha = 0;
+  
+  this.update = function() {
+    
+    if(isMoveRight) {
+      //      this.x++;
+      //      this.y++; 
+      this.alpha = 255;
+      sm += 0.001;
+      this.rotate += 0.00005;
+    } else if(isMoveLeft) {
+      //      this.x++;
+      //      this.y++;
+      sm -= 0.001;
+      this.rotate -= 0.00005;
+    }
+  }
+  this.show = function() {
+    rotate(this.rotate);
+    stroke(12);
+    fill(this.red,this.green,this.blue,this.alpha);
+    rect(this.x,this.y,sm,sm);
+    
+  }
+
+}
+      
+let sm,smW; let osc,fft;
+let isMoveLeft = false; let isMoveRight = false;      
+let mandala = [];  
+let numM = 20;let fbg = 255;let alpha = 0;
+    let freq = 50;let freqUp = true;
+      
+function setup() {
+  let canvas = createCanvas(innerWidth * 0.95, innerHeight * 0.95);
+  canvas.parent('canvas');
+  
+  osc = new p5.SinOsc(); // set frequency and type
+  osc.amp(.5);
+
+  fft = new p5.FFT();
+  osc.freq(1);
+  osc.start();
+  
+  sm = floor(height / 100);
+  smW = floor(width / 100);
+  
+  for(let i = 0; i < numM; i++) {
+    for(let j = 0; j < numM; j++) {       
+      mandala.push(new Mandala(sm*j,sm*i));      
+    }
+  }
+}
+
+function draw() {  
+  background(10);
+  
+  translate(width/2,height/2); 
+  push();
+  for(let i = 0; i < 4; i++) {
+    rotate(HALF_PI * i);
+    for(let cells of mandala) {
+      cells.show();
+      cells.update();
+    }
+  }
+  pop();
+  
+  if(frameCount < 300) {
+    fbg -=2;
+    push();
+    rectMode(CENTER);
+    fill(250,fbg);
+    rect(0,0,width,height);
+    fill(255 - fbg,fbg);
+    textSize(smW*10);
+    textAlign(CENTER,CENTER);
+    text('IZIASLAW PRESENT!',0,0);
+    if(frameCount > 120) {
+      textSize(smW*4);
+      fill(255,40,40,255 + fbg);
+      text('Предупреждение!\nМожет вызвать фотосенситивный\n эпилептический припадок,\n головокружение или рвоту. \n Не рекомендуется смотреть людям\n со слабым вестибюлярным аппаратом.\nУ каждого тысячного прошедшего испытание\n открывается третий глаз и он получает\n суперспособность!',0,0);
+    }
+    pop();
+  } else {
+    isMoveRight = true;
+      let f = round(random(1,10));
+    if(freq <= 50) {
+      freqUp = true;
+//      freq += f;
+    } else if (freq >= 250) {
+      freqUp = false;
+//      freq -= f;
+    } //else {
+//      freq += round(random(-10,10));
+//    }
+    if(freqUp) {freq++;}else{freq--;}
+    let amp = 1;
+    osc.freq(freq);
+    osc.amp(amp);
+  }  
+  
+}   
+      </script>
+    <div id="canvas"></div>
+  </body>
+</html>  

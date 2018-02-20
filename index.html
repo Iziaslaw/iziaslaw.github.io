@@ -98,10 +98,17 @@ p {
       }      
     </style>
 </head>
-<body>
+<body id="body">
   <script>
-    
-    
+    let bgCol;
+    let colR,colG,colB;
+    function bgcol() {
+    colR = Math.floor(Math.random()*255);
+    colG = Math.floor(Math.random()*255);
+    colB = Math.floor(Math.random()*255);
+    bgCol = 'rgb('+colR+', '+colG+', '+colB+')';
+    }
+    bgcol();
   </script>
   
   <h2>Iziaslaw Innovation</h2>
@@ -109,9 +116,9 @@ p {
   <p>Click on the tile below to see something.</p>
 
   <div class="actions">
-    <a href="javascript:(function(){alert('hello!')})()">JSFunc</a>
+    <a href="javascript:(function(){alert('hello, Земляне!')})()">JSFunc</a>
     <a href="javascript:(function(){let script = document.createElement('script');script.src = 'main.js';document.body.appendChild(script);})();">JSFunc2</a>
-    <a href="#">3</a>
+    <a href="javascript:(function(){document.getElementById('body').style.background = bgCol;bgcol()})();">bgcolor</a>
   </div>
 
   <div id="gameboard">
@@ -179,12 +186,28 @@ p {
     <div class="card">IZINGLISH_0.1
         </div></a>
 
-    <a href="#">
-    <div class="card">1
+    <a href="p21_anim_text_1.html">
+    <div class="card">falling_text
         </div></a>
 
+    <a href="p21_anim_mandala.html">
+    <div class="card">Izindala
+        </div></a>
+    
     <a href="#">
-    <div class="card">1
+    <div class="card">soon..
+        </div></a>
+    
+    <a href="#">
+    <div class="card">soon..
+        </div></a>
+    
+    <a href="#">
+    <div class="card">soon..
+        </div></a>
+    
+    <a href="#">
+    <div class="card">soon..
         </div></a>
   </div>
 
