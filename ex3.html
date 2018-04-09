@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>test3</title>
+        <script type="text/javascript" src="lib/jquery-3.1.1.js"></script>
+        <script type="text/javascript">
+"use strict"
+jQuery('document').ready(function () {
+    jQuery('input').on('keyup', function () {
+        var value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20, value21, value22;  
+      
+        value1 = jQuery('#val1').val();
+        value2 = jQuery('#val2').val();
+        value3 = jQuery('#val3').val();
+        value4 = jQuery('#val4').val();
+        value5 = jQuery('#val5').val();
+        value6 = jQuery('#val6').val();
+        value7 = jQuery('#val7').val();
+        value8 = jQuery('#val8').val();
+        value9 = jQuery('#val9').val();
+        value10 = jQuery('#val10').val();
+        value11 = jQuery('#val11').val();
+        value12 = jQuery('#val12').val();
+        value13 = jQuery('#val13').val();
+        value14 = jQuery('#val14').val();
+       
+        value15 = value1 * value2;
+        value16 = value3 * value4;
+        value17 = value5 * value6;
+        value18 = value7 * value8;
+        value19 = value9 * value10;
+        value20 = value11 * value12;
+        value21 = value13 * value14;
+            //var p_clon;
+            //p_clon = jQuery('#second').clone();
+            //jQuery('body').append(p_clon);
+        value22 = value15 + value16 + value17 + value18 + value19 + value20 + value21;
+       
+        jQuery('#result').html(value22);
+    }); 
+});
+
+jQuery('document').ready(function () {
+    
+    jQuery('button').on('click', function() {
+        //document.write(Math.floor(Math.random() * (1001)));
+        var choice = Math.random();
+        var coord = Math.floor(Math.random() * (87));
+        var coord1 = Math.floor(Math.random() * (10000001));
+        var coord2 = Math.floor(Math.random() * (361));
+        var coord3 = Math.floor(Math.random() * (10000001));
+        
+        if (choice <= 0.50) {
+	        choice = "-" + coord;
+        } else {
+	        choice = coord;
+        }
+        jQuery('#result2').html(choice + "." + coord1);
+        jQuery('#result3').html(coord2 + "." + coord3);
+        //*jQuery('#ssil').html("https://www.google.ru/maps/@" + choice + "." + coord1 + "," + coord2 + "." + coord3 + ",677960m/data=!3m1!1e3");
+        jQuery('#ssil').html("<a href= https://www.google.ru/maps/@" + choice + "." + coord1 + "," + coord2 + "." + coord3 + ",677960m/data=!3m1!1e3 target= _blank >Рискни!!!</a>");
+    });
+});
+        </script>
+        <style>
+#val1, #val3, #val5, #val7, #val9, #val11, #val13 {
+    margin-left: 40px;
+}
+#result, #ssil {
+    color: red;
+    font-size: 1.6em;
+}
+body {
+    
+    background-color: bisque;
+}
+#sideRight {    
+    float: right;
+    margin-right: -3px;
+    width: 240px;
+    margin-left: -240px;
+    position: relative;
+}
+#qoo-counter {
+    position: absolute;
+    bottom: -40px;
+    display: block;
+    margin-bottom: 5px;
+}
+        </style>
+    </head>
+    <body>
+        <div id="second">
+        1<input id="val1" type="number"/> *
+        <input id="val2" type="number"/> +<br>
+        2<input id="val3" type="number"/> *
+        <input id="val4" type="number"/> +<br>
+        3<input id="val5" type="number"/> *
+        <input id="val6" type="number"/> +<br>
+        4<input id="val7" type="number"/> *
+        <input id="val8" type="number"/> +<br>
+        5<input id="val9" type="number"/> *
+        <input id="val10" type="number"/> +<br>
+        6<input id="val11" type="number"/> *
+        <input id="val12" type="number"/> +<br>
+        7<input id="val13" type="number"/> *
+        <input id="val14" type="number"/> +<br>       
+        </div>
+        <br><br>
+        <div id="result">ИТОГО</div>
+        <br><br>
+        <div>На нашей планете много интересных мест. И на суше и на море.</div>
+            А куда попадешь ты?<button>Коорд.</button><br>
+        lat.<div id="result2">.......</div>
+        lon.<div id="result3">.......</div>
+        
+        
+        <button id="ssil">EARTH</button>
+        <!--<iframe src="https://www.google.ru/maps/@40.1369359,-74.2964368,9.5z"></iframe>-->
+        <!--https://www.bestmaps.ru/map/google/hybrid/10/39.6707/285.8167 -->
+        <!--https://www.google.ru/maps/@-4.2112706,139.0960515,1142481m/data=!3m1!1e3-->
+        <aside id="sideRight">
+            <div></div>
+        
+        </aside>
+        <!--Счетчик посещений-->
+        <div id="qoo-counter">
+<a href="http://qoo.by/" title="Сервис коротких ссылок">
+<img src="http://qoo.by/counter/standard/003.png" alt="Укоротить ссылку">
+<div id="qoo-counter-visits"></div>
+<div id="qoo-counter-views"></div>
+</a>
+</div>
+<script type="text/javascript" src="http://qoo.by/counter.js"></script>
+
+
+    </body>
+
+</html>
