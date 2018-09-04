@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - modifier - tessellation</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				color: #ffffff;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#uname {
+				color: #fff;
+				position: absolute;
+				bottom: 20px; width: 100%;
+				padding: 5px;
+				z-index:100;
+			}
+			a { color: red }
+		</style>
+	</head>
+
+	<body>
+<!--      <textarea type='text'>jk</textarea>-->
+		<div id="container">     </div>
+<!--
+      <textarea >jj</textarea>
+      <a href="https://threejs.org"  target="_blank" rel="noopener noreferrer">three.js</a> webaudio - visualizer |
+			music by <a href="http://www.newgrounds.com/audio/listen/376737" target="_blank" rel="noopener">skullbeatz</a>
+-->
+      <input type="text" id="info" value="IZIASLAW">
+      
+<button id="button">Create</button>
+<input type="text" id="hsl" value= 0 style="width:25px">      
+		<script src="lib/three_95/three.min.js"></script>
+
+		<script src="lib/three_95/TrackballControls.js"></script>
+
+		<script src="lib/three_95/TessellateModifier.js"></script>
+
+		<script src="lib/three_95/Detector.js"></script>
+		<script src="lib/three_95/stats.min.js"></script>
+
+		<script type="x-shader/x-vertex" id="vertexshader">
+			uniform float amplitude;
+			attribute vec3 customColor;
+			attribute vec3 displacement;
+			varying vec3 vNormal;
+			varying vec3 vColor;
+			void main() {
+				vNormal = normal;
+				vColor = customColor;
+				vec3 newPosition = position + normal * amplitude * displacement;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			varying vec3 vNormal;
+			varying vec3 vColor;
+			void main() {
+				const float ambient = 0.4;
+				vec3 light = vec3( 1.0 );
+				light = normalize( light );
+				float directional = max( dot( vNormal, light ), 0.0 );
+				gl_FragColor = vec4( ( directional + ambient ) * vColor, 1.0 );
+			}
+		</script>
+
+
+		<script>
+		if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+		var renderer, scene, camera, stats,content = 'IZIASLAW';
+          var url = ['fonts/helvetiker_bold.typeface.json', '/fonts/optimer_regular.typeface.json','../image/otf/gentilis_regular.typeface.json', 'fonts/Danger_Regular.json','fonts/AC Line_Regular.json'];
+		var mesh, uniforms;
+          var ampli = 0;
+		var WIDTH = window.innerWidth,
+			HEIGHT = window.innerHeight*0.96;
+        var startButton = document.getElementById( 'button' );
+	startButton.addEventListener( 'click', nextText );
+        var input = document.getElementById('info');
+        var myCol = document.getElementById('hsl');
+          
+var introT = 0;var iI = 0;
+var arIntro = [2,"WERQT",2,"XCREW",2,"!@#$%"];var aD = true;          
+      
+function nextText() {
+  ampli = 0;
+  if(aD) {
+  setTimeout(function(){initText();aD=true;}, 400);
+    
+  }
+  aD = false;
+}          
+function initText() {
+//  scene.remove(mesh);
+  for(var j = 0;j<scene.children.length;) {
+  
+    scene.children[j].position.z -=50;
+    scene.children[j].position.y +=50;
+    j++;
+  }
+  content = input.value;
+		var loader = new THREE.FontLoader();
+		loader.load( url[3], function ( font ) {
+//			init( font );
+//			animate();
+  
+  var geometry = new THREE.TextGeometry( content, {
+				font: font,
+				size: 40,
+				height: 5,
+				curveSegments: 3,
+				bevelThickness: 2,
+				bevelSize: 1,
+				bevelEnabled: true
+			});
+			geometry.center();
+			var tessellateModifier = new THREE.TessellateModifier( 8 );
+			for ( var i = 0; i < 6; i ++ ) {
+				tessellateModifier.modify( geometry );
+			}
+			//
+			geometry = new THREE.BufferGeometry().fromGeometry( geometry );
+			var numFaces = geometry.attributes.position.count / 3;
+			var colors = new Float32Array( numFaces * 3 * 3 );
+			var displacement = new Float32Array( numFaces * 3 * 3 );
+			var color = new THREE.Color();
+			for ( var f = 0; f < numFaces; f ++ ) {
+				var index = 9 * f;
+		var h = myCol.value > 0 ? myCol.value : f/(numFaces);//0.2 * Math.random();
+				var s = 0.5 + 0.5 * Math.random();
+				var l = 0.5 + 0.5 * Math.random();
+				color.setHSL( h, s, l );
+				var d = 30 * ( 0.5 - Math.random() );//диаметр разбега faces
+				for ( var i = 0; i < 3; i ++ ) {
+					colors[ index + ( 3 * i )     ] = color.r;
+					colors[ index + ( 3 * i ) + 1 ] = color.g;
+					colors[ index + ( 3 * i ) + 2 ] = color.b;
+					displacement[ index + ( 3 * i )     ] = d;
+					displacement[ index + ( 3 * i ) + 1 ] = d;
+					displacement[ index + ( 3 * i ) + 2 ] = d;               
+				}
+			}
+//          console.log(colors)
+			geometry.addAttribute( 'customColor', new THREE.BufferAttribute( colors, 3 ) );
+			geometry.addAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
+			//
+			uniforms = {
+				amplitude: { value: 0.0 }
+			};
+			var shaderMaterial = new THREE.ShaderMaterial( {
+				uniforms:       uniforms,
+				vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+				fragmentShader: document.getElementById( 'fragmentshader' ).textContent
+			});
+			//
+			mesh = new THREE.Mesh( geometry, shaderMaterial );
+          mesh.position.y = -50;
+			scene.add( mesh );
+ampli = 1.0;
+          animate();
+		} );
+}          
+          init();
+          
+		function init( font ) {
+         
+			camera = new THREE.PerspectiveCamera( 40, WIDTH / HEIGHT, 1, 10000 );
+			camera.position.set( 0, -50, 300 );
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0x050505 );
+			//
+initText(font);			
+          
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( WIDTH, HEIGHT );
+		var container = document.getElementById( 'container' );
+			container.appendChild( renderer.domElement );
+			stats = new Stats();
+			container.appendChild( stats.dom );
+//          var info = document.getElementById('info');
+//          info.appendChild(renderer.domElement);
+			//
+			controls = new THREE.TrackballControls( camera, container );
+          
+			window.addEventListener( 'resize', onWindowResize, false );
+		}
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+		}
+		function animate() {
+			requestAnimationFrame( animate );
+			render();
+			stats.update();
+		}
+		function render() {
+			var time = Date.now() * 0.001;
+			uniforms.amplitude.value = ampli* (1.0 + Math.sin( time * 0.5 ));
+//if(introT < time) {
+//  if(iI == arIntro.length) {iI = 0;}
+//  content = arIntro[iI+1];
+//  initText();
+//  introT = time + arIntro[iI];
+//  iI += 2;
+//}          
+
+  
+     
+			controls.update();
+			renderer.render( scene, camera );
+		}
+//          scene.remove(mesh);
+	</script>
+
+</body>
+
+</html>
