@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>art_t_1</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				color: #eee;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				background-color: #000;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+			}
+			#info {
+				position: absolute;
+				top: 0px;right: 0px; 
+				padding: 5px;
+			}
+			a {
+				color: #0080ff;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="../ti_js/three.js"></script>
+	<script src="../ti_js/controls/OrbitControls.js"></script>
+		<script src="../ti_js/Detector.js"></script>
+		<script src="../ti_js/libs/stats.min.js"></script>
+<!--<button id="info" >texture</button>-->
+		<script>
+          var mTexts = ["games/soundgame/","sGame", "games/soundlive/","sLive", "games/game_of_life_js/","gameOfLife", "games/tetris/","tetris", "games/spinsw/","spinSW", "p_6_1_solar_system.html", "solarSys", "p11_2_steering_behavior.html", "steerBeh", "p13_izi_sound1.html","Sokolof", "p13_izi_pers_1.html","iziPers", "p10_simbols_string_1.html","simbolsString", "p10_simbols.html","simbols", "p6_music_creator_1.html", "iZibelius", "p6_music_player_2.html","musicPlayer",  "chebu.html","Chebu", "p18_izilution_0_0_2.html","izigario_0.1",  "p24_izinglish_0_1.html","IZINGLISH_0.1",  "p21_anim_text_1.html","fallingText",  "p21_anim_mandala.html","Izindala", "sound_creator_1_0.html","8BitRandom",  "modifier_tessellation.html","textModTes"];
+          var texts = [];
+			var scene = new THREE.Scene();
+          scene.background = new THREE.Color( 0xcce0ff );
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+          
+//            var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+//controls.update() must be called after any manual changes to the camera's transform
+camera.position.set( 0, 0, 10 );
+//controls.update();
+          
+function CustomSinCurve( scale ) {
+
+	THREE.Curve.call( this );
+
+	this.scale = ( scale === undefined ) ? 1 : scale;
+
+}
+
+CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
+CustomSinCurve.prototype.constructor = CustomSinCurve;
+
+CustomSinCurve.prototype.getPoint = function ( t ) {
+
+	var tx = Math.cos( 2 * Math.PI * t );//t * 3 - 1.5;
+	var ty = Math.sin( 2 * Math.PI * t );
+	var tz = 0.1 * Math.sin( 8 * Math.PI * t );
+
+	return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+
+};
+
+var path = new CustomSinCurve( 10 );
+var geometry = new THREE.TubeGeometry( path, 100, 1, 16, false );//path,tubularSegments,radius,radialSegments,closed
+//  var map = new THREE.TextureLoader().load( '../image/got8.jpg' );
+  var map = new THREE.TextureLoader().load( '../image/westeros_end1.jpg' );
+  map.wrapS = THREE.RepeatWrapping;
+  map.wrapT = THREE.MirroredRepeatWrapping;
+    map.repeat.set(8,2);      
+  map.anisotropy = 16;        
+var material = new THREE.MeshBasicMaterial( { map: map, side: THREE.DoubleSide } );
+var mesh = new THREE.Mesh( geometry, material );
+scene.add( mesh );
+          
+//texts --converter https://gero3.github.io/facetype.js/ 
+var loader = new THREE.FontLoader();
+          for(let i=0;i<mTexts.length;i+=2) {
+          var font = loader.load(
+//          '../image/otf/AC Line_Regular.json', 
+          '../image/otf/Danger_Regular.json', 
+            function(font) {
+            
+              
+            var geometryT = new THREE.TextGeometry(mTexts[i+1], {
+              font: font,
+              size: 0.3,
+              height: 0.03
+//              curveSegments: 12,
+//              bevelEnabled: true,
+//              bevelThickness: 10,
+//              bevelSize: 8,
+//              bevelSegments: 5
+            });
+          geometryT.center();    
+              
+          var pMat = new THREE.MeshBasicMaterial({color: 0x319a31,transparent: true});  
+          var pGeom = new THREE.PlaneGeometry( 1, 0.5, 1 ); 
+          var pMesh = new THREE.Mesh(pGeom,pMat);
+              pMesh.material.opacity = .4;
+              pMesh.name = i;
+          var textmaterial = new THREE.MeshBasicMaterial({color: 0xdb5b0b});  
+          var textmesh = new THREE.Mesh(geometryT, textmaterial);  
+//          textmesh.position.copy(
+//            geometry.parameters.path.getPointAt(0.5)
+//          );  
+            pMesh.add(textmesh);  
+            let copy = pMesh.clone();
+            texts.push(copy);
+            scene.add(copy);
+            copy.position.copy(
+              geometry.parameters.path.getPointAt((0.9/mTexts.length)+i*(0.9/mTexts.length))
+            );
+              
+//          scene.add(textmesh);  
+          }            
+          );
+          }
+
+//			camera.position.z = 5;
+var normal = new THREE.Vector3();          
+var binormal = new THREE.Vector3();   
+
+          let speed = 0;
+          let position = 0;
+          document.addEventListener('wheel',function(event){
+            speed += event.deltaY*0.001;
+          });          
+
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2();
+
+function onMouseDown( event ) {
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+ // update the picking ray with the camera and mouse position
+	raycaster.setFromCamera( mouse, camera );
+	// calculate objects intersecting the picking ray
+  console.log(scene.children);
+	var intersects = raycaster.intersectObjects( texts );
+	for ( var i = 0; i < intersects.length; i++ ) {
+		//intersects[ i ].object.material.color.set( 0xff0000 );
+  console.log(intersects[i].object.name);
+      document.location.href = mTexts[intersects[i].object.name+1];
+	}
+}         
+var mMX = 0;          
+var mMY = 0;          
+function onMouseMove( event ) {
+	mMX = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mMY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+ 
+}          
+          
+var animate = function () {
+              
+              var time = position*400;//Date.now();
+              var looptime = 30 * 1000;
+              var t = (time % looptime) / looptime;
+              var pos = geometry.parameters.path.getPointAt(t);
+              
+              var segments = geometry.tangents.length;
+              var pickt = t * segments;
+              var pick = Math.floor(pickt);
+              var pickNext = (pick + 1) % segments;
+              binormal.subVectors(geometry.binormals[pickNext], geometry.binormals[pick]);
+              binormal.multiplyScalar(pickt - pick).add(geometry.binormals[pick]);
+              var dir = geometry.parameters.path.getTangentAt(t);
+              var offset = 0;
+              normal.copy(binormal).cross(dir);
+              //we move on a offset on its binormal
+              pos.add(normal.clone().multiplyScalar(offset));
+              camera.position.copy(pos);
+              //using arclength for stablization in look ahead
+              var lookAt = geometry.parameters.path.getPointAt((t+1 / geometry.parameters.path.getLength()) % 1);
+//  console.log(lookAt);
+              //camera orientation 2 - up orientation via normal
+              camera.matrix.lookAt(camera.position, lookAt, normal);
+              camera.rotation.setFromRotationMatrix(camera.matrix, camera.rotation.order);
+              
+              texts.forEach(t => {
+                t.quaternion.copy(camera.quaternion);
+              });
+              
+//mouse pos  
+  position += speed;//0.01;//speed;    
+  if(position < 0) {
+    position = 0;
+  }  
+  speed *= 0.9;
+//  let i = Math.round(position);
+//  let dif = i - position;            
+//  position += dif*0.035;            
+//  if(Math.abs(i-position)<0.001) {
+//    position = i;
+//  }
+              
+				requestAnimationFrame( animate );
+//				controls.update();
+  camera.rotation.y += mMY;
+  camera.rotation.x += mMX;
+				renderer.render( scene, camera );
+			};
+          
+          
+window.addEventListener( 'mousedown', onMouseDown, false );
+window.addEventListener( 'mousemove', onMouseMove, false );
+			animate();
+		</script>
+
+	</body>
+</html>
