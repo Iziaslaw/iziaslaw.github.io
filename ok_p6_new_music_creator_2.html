@@ -8,9 +8,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 -->
-  <script type="text/javascript" src="bib/p5.js"></script>
-  <script type="text/javascript" src="bib/p5.dom.js"></script>
-  <script type="text/javascript" src="bib/p5.sound.js"></script>
+  <script type="text/javascript" src="lib/p5.min.js"></script>
+  <script type="text/javascript" src="lib/p5.dom.min.js"></script>
+  <script type="text/javascript" src="lib/p5.sound.min.js"></script>
 
   <!--    <script type="text/javascript" src="js/main.js"></script>-->
 <style>
@@ -187,7 +187,7 @@ let startList = [67,24,4,72,24,4,76,24,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 let diezList = [0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0]  
   
   function preload() {
-    musosc1 =loadJSON('musOsc (2).json');
+    //musosc1 =loadJSON('musOsc (2).json');
   }
   function setup() {
     createCanvas(innerWidth, innerHeight * 0.96);
@@ -255,11 +255,11 @@ let diezList = [0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,
       button7.html('atOneTime >>' + sameTimeNote);
     });
 
-//    for(let i=0;i<lenList; i++) {
-//      for(let j=0;j< sameTimeNote;j++) {
-//        startList.push(0,0,0);
-//      }
-//    }
+    for(let i=0;i<lenList; i++) {
+      for(let j=0;j< sameTimeNote;j++) {
+        startList.push(0,0,0);
+      }
+    }
     
 //    var list = startList;//split(words, ' ');
 //createButton('save')
