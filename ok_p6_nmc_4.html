@@ -285,9 +285,9 @@ let startList = [];
   let nKeys = sameTimeNote;
 let diezList = [0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0]  
   
-  function preload() {
-    musosc1 = loadJSON('i_holms_i_vatson.json');
-  }
+//  function preload() {
+//    musosc1 = loadJSON('i_holms_i_vatson.json');
+//  }
   function setup() {
     createCanvas(innerWidth, innerHeight * 0.9);
     iH = floor(innerHeight/74);
@@ -297,18 +297,19 @@ let diezList = [0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,
 		pan[0].children[2].children[1].value = iH;
 
 
-//    for(let i=0;i<lenList; i++) {
-//      for(let j=0;j< sameTimeNote;j++) {
-//        startList.push(0,0,0);
-//      }
-//    }    
-		startList = musosc1.mus;
-		sameTimeNote = musosc1.tracks;
-		lenList = musosc1.lenList;
-		typeNote = musosc1.type;
-		for(let i = 1;i<5;i++) {
-			pan[0].children[4].children[i-1].textContent = typeNote[i];
-		}
+    for(let i=0;i<lenList; i++) {
+      for(let j=0;j< sameTimeNote;j++) {
+        startList.push(0,0,0);
+      }
+    }    
+//		startList = musosc1.mus;
+//		sameTimeNote = musosc1.tracks;
+//		lenList = musosc1.lenList;
+//		typeNote = musosc1.type;
+//		inp.value = musosc1.name;
+//		for(let i = 1;i<5;i++) {
+//			pan[0].children[4].children[i-1].textContent = typeNote[i];
+//		}
   }
   function draw() {
     background(156);   
