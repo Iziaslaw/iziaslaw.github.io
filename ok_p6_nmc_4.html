@@ -9,10 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 -->
   <script type="text/javascript" src="lib/p5.min.js"></script>
-  <script type="text/javascript" src="lib/p5.dom.min.js"></script>
-  <script type="text/javascript" src="lib/p5.sound.min.js"></script>
 
-  <!--    <script type="text/javascript" src="js/main.js"></script>-->
 <style>
   body {
     background: rgb(156,156,156);
@@ -96,11 +93,11 @@ a:hover span{ display:block; }
 		<input type="range" id="m2" min="2" max="30" step="1" value="8">
 	</div>
 	<div class="panel4">+/- to sheet 
-		<button onclick="TimePlus();">Adding(8)</button><p></p><button onclick="startList.splice(-nKeys*3,nKeys*3);lenList--;">Substraction(1)</button>
+		<button onclick="TimePlus();">Adding(octave)</button><p></p><button onclick="startList.splice(-nKeys*3,nKeys*3);lenList--;">Substraction(1)</button>
 	</div>
 	<div class="panel5"><button onclick='Pan50(1);'></button><button onclick='Pan50(2)'>triangle</button><button onclick='Pan50(3)'>square</button><button onclick='Pan50(4)'>sawtooth</button></div>
 	<div class="panel6"><button  onclick='Pan60();'>▶</button><span>TRACKS = 2</span> <button onclick='if(!playing){Pan61();}'>+</button><button onclick='if(!playing){Pan62();}'>-</button></div>
-	<div class="panel7">JSON file:<button onclick="Record()">Record</button>del and create<button onclick="for(let r=0;r<startList.length;r++) { startList.splice(r,1,0); }for(let i= 0;i<sameTimeNote;i++) {Random(sameTimeNote,i);	}">Random</button></div>
+	<div class="panel7">JSON file:<button onclick="Record()">Save</button>del and create<button onclick="for(let r=0;r<startList.length;r++) { startList.splice(r,1,0); }for(let i= 0;i<sameTimeNote;i++) {Random(sameTimeNote,i);	}">Random</button></div>
 </div>
 <script>
  let pan = document.getElementsByClassName('panel');
@@ -130,12 +127,13 @@ let inp = document.getElementById('title');
   setup(type) {
     this.oscillator = this.context.createOscillator();
     this.gainNode = this.context.createGain();
+this.gainNode.value = 0.1;
 
     this.oscillator.connect(this.gainNode);
     this.gainNode.connect(this.context.destination);
+//    this.gainNode.connect(this.gainNode.value);
     this.oscillator.type = type;
-this.oscillator.volume = 0.0;
-    //console.log(this.oscillator);
+    console.log(this.gainNode);
   }
 
   play(value,time,type) {
@@ -144,7 +142,8 @@ this.oscillator.volume = 0.0;
     this.oscillator.frequency.value = value;
     this.gainNode.gain.setValueAtTime(0, this.context.currentTime);//мгновенное изменение значения Gain(значение, момент времени)
     this.gainNode.gain.linearRampToValueAtTime(1, this.context.currentTime + 0.01);//линейное изменение значения(value, endTime)        Attack
-            
+    this.gainNode.gain.exponentialRampToValueAtTime(0.1, this.context.currentTime + time);
+		
     this.oscillator.start(this.context.currentTime);
     
 //    this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + time);// экспоненциальное изменение значения Gain (value, endTime)
@@ -155,7 +154,7 @@ this.oscillator.volume = 0.0;
   stop(time) {
     //console.log(Date.now());
     //this.gainNode.gain.setValueCurveAtTime(this.imag, this.context.currentTime, 1);//изменение Gain по кривой из значений массива(array[value], startTime, duration )
-    this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + time);// экспоненциальное изменение значения Gain (value, endTime)
+    //this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + time);// экспоненциальное изменение значения Gain (value, endTime)
     //this.oscillator.stop(this.context.currentTime + time);
   }
  
@@ -166,8 +165,8 @@ let context = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(note,utime,type) {
   let sound = new Sound(context);
   let value = note;//note.dataset.frequency;
-  let time = utime*(space/1000)/2;//- 0.1;
-  //console.log(time);
+  let time = utime*(space/1000);//-0.05;//2;//- 0.1;
+  console.log(time);
   //let type = 'triangle';
   sound.play(value,time,type);
 //setTimeout( 
@@ -192,10 +191,10 @@ function playSound(note,utime,type) {
   }
 	function Random(n,ii) {
 		
-		let lenNoteArr = [16, 8,8, 4,4,4, 2,2,2,2,2];//freqNote 36-95,  
+		let lenNoteArr = [16, 8,8, 4,4,4, 2,2,2,2,2];//freqNote 33-95,  
 		let lenListRan = 0;
 		while(lenListRan < lenList) {
-			let n1 = floor(random(0,60)+36);
+			let n1 = floor(random(0,numsNote)+33);
 			let l1 = random(lenNoteArr);
 			startList.splice(lenListRan*3*n +(ii*3),3,n1,l1,ii+1); //   , f,l,t
 			lenListRan += l1;
@@ -211,6 +210,8 @@ function playSound(note,utime,type) {
         json.tracks = sameTimeNote;
         json.type = typeNote;
         json.mus = startList; 
+		    json.lenList = lenList;
+				
 //        save(json, 'musOsc'+ '.json',true);
         save(json, 'i' + inp.value + '.json',true);
   }
@@ -278,30 +279,36 @@ function toggleNext() {
   var sly1,sly2,sly3,sly4,div1,div2;  
 	
 let lenList = 96; 
-let iW,iH;let xList = 30,yList = 40; 
+let iW,iH;let xList = 30,yList = 40,numsNote = 63; 
 let startList = []; 
   let sameTimeNote = 2;
   let nKeys = sameTimeNote;
 let diezList = [0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0]  
   
   function preload() {
-    //musosc1 =loadJSON('musOsc (2).json');
+    musosc1 = loadJSON('i_holms_i_vatson.json');
   }
   function setup() {
     createCanvas(innerWidth, innerHeight * 0.9);
-    iH = floor(innerHeight/72);
+    iH = floor(innerHeight/74);
     iW = floor(innerWidth/100);
 		
 		pan[0].children[2].children[0].value = iW;
 		pan[0].children[2].children[1].value = iH;
 
 
-    for(let i=0;i<lenList; i++) {
-      for(let j=0;j< sameTimeNote;j++) {
-        startList.push(0,0,0);
-      }
-    }    
-
+//    for(let i=0;i<lenList; i++) {
+//      for(let j=0;j< sameTimeNote;j++) {
+//        startList.push(0,0,0);
+//      }
+//    }    
+		startList = musosc1.mus;
+		sameTimeNote = musosc1.tracks;
+		lenList = musosc1.lenList;
+		typeNote = musosc1.type;
+		for(let i = 1;i<5;i++) {
+			pan[0].children[4].children[i-1].textContent = typeNote[i];
+		}
   }
   function draw() {
     background(156);   
@@ -314,7 +321,7 @@ let diezList = [0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,
 	iH = pan[0].children[2].children[1].valueAsNumber;  
 		
     
-    for(let l=0;l<60;l++) {      
+    for(let l=0;l<numsNote;l++) {      
         push();
         noStroke();
         if(diezList[l] == 0) {
@@ -329,7 +336,7 @@ let diezList = [0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,
 //vertical line split bites    
     for(let i=0;i<lenList;i++) {
       push();
-      line(xList + i*iW,yList + 0,xList + i*iW,yList + 60*iH);
+      line(xList + i*iW,yList + 0,xList + i*iW,yList + numsNote*iH);
       pop();
     }
 //vertical red line
@@ -388,11 +395,11 @@ pan[0].children[1].children[0].textContent = '<'+tempo*8+' BpM >';
   }
   
   function mousePressed() {
-    if( mouseX < lenList*iW+xList && mouseY < 60*iH+yList && mouseX > xList && mouseY > yList) {
+    if( mouseX < lenList*iW+xList && mouseY < numsNote*iH+yList && mouseX > xList && mouseY > yList) {
 //    let numArr = floor(mouseX / iW) * 60 * 3  + floor(mouseY / iH) * 3; 
     let numArr = floor((mouseX-xList) / iW) * sameTimeNote * 3;//  + floor(mouseY / iH) * 3; 
     let freqNote = 95 - floor((mouseY-yList) / iH);
-    //console.log(numArr,freqNote);
+    console.log(numArr,freqNote);
       
       for(let t = 0;t < sameTimeNote * 3;t += 3) {
         if(typeShow !== 0 && startList[numArr+t] == 0) {
