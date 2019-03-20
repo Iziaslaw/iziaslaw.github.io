@@ -1,0 +1,648 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>izibelius3.05</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+-->
+  <script type="text/javascript" src="../lib/p5.min.js"></script>
+  <script type="text/javascript" src="../lib/tone.13.4.9.js"></script>
+
+<style>
+  body {
+    background: rgb(156,156,156);
+    margin: 0;
+    padding: 0;
+		overflow: hidden;
+  }
+	a span{
+	display:none;
+	color:#fff;
+	background:rgba(83, 25, 25, 0.75);
+	padding:20px;
+	border-radius:4px;
+	width:200px;
+	text-align: left;
+	position: absolute;
+	right: 20px;	
+	z-index:10;
+}
+a {position: absolute; 
+	display: inline-block;
+	background-color: brown;
+	text-decoration: none;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	text-align: center;
+	top: 10px;
+	right: 10px;}
+a:hover span{ display:block; }
+	
+	#title {
+		position: absolute;
+		text-align: center;
+		left: 40%;
+		top: 6px;
+	}
+	.panel div {
+		width: 135px;
+		height: 130px;
+		text-align: center;
+		
+	}
+	.panel {
+		bottom: 4px;
+		width: 96%;
+		position: absolute;
+		column-count: 7;
+		column-gap: 3px;
+	}
+	.panel div {
+		border-radius: 5px;
+		background-color: #ba795c;
+/*		break-inside: avoid;*/
+		
+	}	
+	button {
+		width: 120px;
+		background: #baa991;
+		border-radius: 4px;
+	}
+/*	.panel1 {background-color: aquamarine}*/
+</style>
+
+</head>
+<body>  
+<input id="title" type="text" placeholder='TITLE'> 	
+	<a href='#' id="help">?<span >[ctrl + space] -- play/stop<br> [ctrl + →, ←] - move left/right <br> [ctrl + ↑, ↓] --- change type<br> [scroll +/-] ---- note length</span></a>	
+<div class="panel">
+	<div class="panel1">
+		<span>-60/25-</span><br>Tempo
+		<input type="range" id="m2" min="15" max="180" step="5" value="60">
+		<span>-8-</span><br>Octave size
+		<input type="range" id="m2" min="8" max="32" step="1" value="8">
+	</div>
+	<div class="panel2">
+		<input type="range" id="m2" min="2" max="30" step="1" value="8">
+		 scaleX/scaleY
+		<input type="range" id="m2" min="2" max="30" step="1" value="8">
+		move list
+		<input type="range" id="m2" min="0" max="3000" step="100" value="0">		
+	</div>
+	<div class="panel3">
+		<button onclick="TimePlus();">Adding(octave)</button><span>+/- to sheet</span>
+		<button onclick="TimeMinus();">Substraction (octave)</button><p></p>
+		<button onclick="startList.splice(-nKeys*3,nKeys*3);lenList--;">Substraction(1)</button>
+	</div>
+	<div class="panel4"> 
+		<button onclick="if(!sel){sel=true;pan[0].children[3].children[0].style.background = 'brown';}else{sel=false;pan[0].children[3].children[0].style.background = 'coral';}" style="background: coral;">Selection</button>
+		<button onclick="DelSelection();">Del select</button>
+		<button onclick="preload(1);">load1</button>
+		<button onclick="loadList();">showLoad</button>
+	</div>
+	<div class="panel5"><button onclick='Pan50(1);'></button><button onclick='Pan50(2)'>triangle</button><button onclick='Pan50(3)'>square</button><button onclick='Pan50(4)'>sawtooth</button><button onclick='Pan50(5)'>ex1</button><button onclick='Pan50(6)'>ex2</button></div>
+	<div class="panel6"><button  onclick='Pan60();'>▶</button><span>TRACKS = 2</span> <button onclick='if(!playing){Pan61();}'>+</button><button onclick='if(!playing){Pan62();}'>-</button></div>
+	<div class="panel7">JSON file:<button onclick="Record();">Save</button>del and create<button onclick="Clear();">Clear</button><button onclick="for(let r=0;r<startList.length;r++) { startList.splice(r,1,0); }for(let i= 0;i<sameTimeNote;i++) {Random1(sameTimeNote,i);	}">Random</button></div>
+</div>
+<script>
+var synth = new Tone.Synth().toMaster();	
+	var fmSynth = new Tone.FMSynth().toMaster();
+var synth1 = new Tone.AMSynth({
+harmonicity  : 3 ,
+detune  : 0 ,
+oscillator  : {
+type  : 'sine'
+}  ,
+envelope  : {
+attack  : 0.01 ,
+decay  : 0.01 ,
+sustain  : 1 ,
+release  : 0.5
+}  ,
+modulation  : {
+type  : 'square'
+}  ,
+modulationEnvelope  : {
+attack  : 0.5 ,
+decay  : 0 ,
+sustain  : 1 ,
+release  : 0.5
+}
+}).toMaster();	
+var synthA = new Tone.Synth({
+  oscillator: {
+    type: 'fmsquare',
+    modulationType: 'sawtooth',
+    modulationIndex: 3,
+    harmonicity: 3.4
+  },
+  envelope: {
+    attack: 0.001,
+    decay: 0.1,
+    sustain: 0.1,
+    release: 0.1
+  }
+}).toMaster();
+
+var synthB = new Tone.Synth({
+  oscillator: {
+    type: 'triangle8'
+  },
+  envelope: {
+    attack: 2,
+    decay: 1,
+    sustain: 0.4,
+    release: 4
+  }
+}).toMaster();
+var synthC = new Tone.MetalSynth({
+frequency  : 200 ,
+envelope  : {
+attack  : 0.01 ,
+decay  : 0.4 ,
+release  : 0.2
+}  ,
+harmonicity  : 12 ,//5.1 ,
+modulationIndex  : 20 ,//32 ,
+resonance  : 800 ,//4000 ,
+octaves  : 1.5
+}).toMaster();	
+var synthD = new Tone.MembraneSynth({
+	pitchDecay  : 0.05 ,
+octaves  : 10 ,
+oscillator  : {
+type  : 'sine'
+}  ,
+envelope  : {
+attack  : 0.001 ,
+decay  : 0.4 ,
+sustain  : 0.01 ,
+release  : 1.4 ,
+attackCurve  : 'exponential'
+}
+}).toMaster();	
+function playSoundT(note,utime,type) {
+	//var synth = new Tone.Synth().toMaster();
+  let noteArr = ['C4','D4','E4','F4','G4','A4','B4'];
+	let noteL = noteArr[note%7];
+  let value = note;//note.dataset.frequency;
+  let time = utime*(space/1000);//-0.05;//2;//- 0.1;
+//synth.triggerAttack(note);
+	if (type == 5) {synthD.triggerAttackRelease(note, time);}
+	if (type == 6) {synthB.triggerAttackRelease(note, time);}
+	if (type == 'square') {synthC.triggerAttackRelease(note, time);}
+	if (type == 'sawtooth') {fmSynth.triggerAttackRelease(note, time);}
+//console.log(noteL,note%7,type);	
+//setTimeout( 
+//  function() {
+//synth.triggerRelease();  
+//console.log('stop');		
+//  },
+//  time
+//  );
+ 
+} 	
+	
+	
+ let pan = document.getElementsByClassName('panel');
+let inp = document.getElementById('title');
+  //import {mus} from 'musOsc (2).json'
+//simple player oscillator  
+  let playing = false;
+  let typeNote = ['none/DEL','sine','triangle','square','sawtooth','ex1','ex2'];
+  let typeNoteM = [0,1,2,3,4,5,6];
+  let cType = ['red','orange','yellow','green','aqua','blue','violet'];
+  let timer = 0; 
+  let iL = 0;//место в композиции startList
+  let space = 125;
+  let tempo = 60;
+  let qwOct = 8;
+  let lenNote = 1;// x length show note
+  let typeShow = 1;// x type show note (del,sine,triangle,square,sawtooth)
+      let typeShowM = 1;
+	let startG = false;
+  
+  class Sound {
+  
+  constructor(context) {
+    this.context = context;
+		this.imag = new Float32Array(8);
+    this.imag = [0.5,1,0.5,1,0.7,1,0.5,0];//,1,0,0.5,0,0.4,0];// для setValueCurveAtTime , можно var waveArray = new Float32Array(9);waveArray[0] = 0.5; и т.д.
+  }
+  
+  setup(type) {
+    this.oscillator = this.context.createOscillator();
+    this.gainNode = this.context.createGain();
+this.gainNode.gain.value = 0.1;
+
+    this.oscillator.connect(this.gainNode);
+    this.gainNode.connect(this.context.destination);
+    //this.gainNode.connect(this.gainNode.gain.value);
+    this.oscillator.type = typeNote[type];
+    console.log(this.gainNode,this.oscillator);
+  }
+
+  play(value,time,type) {
+    this.setup(type);
+
+    this.oscillator.frequency.value = value;
+      //this.gainNode.gain.setValueAtTime(0, this.context.currentTime);//мгновенное изменение значения Gain(значение, момент времени)
+    //this.gainNode.gain.linearRampToValueAtTime(0.1, this.context.currentTime + 0.001);//линейное изменение значения(value, endTime)        Attack
+    //this.gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + time);
+  this.gainNode.gain.setValueCurveAtTime(this.imag, this.context.currentTime, time);//изменение Gain по кривой из значений массива(array[value], startTime, duration )
+		
+    this.oscillator.start(this.context.currentTime);
+    
+//    this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + time);// экспоненциальное изменение значения Gain (value, endTime)
+    this.oscillator.stop(this.context.currentTime + time);
+  }
+  
+  stop(time) {
+    //console.log(Date.now());
+    //this.gainNode.gain.setValueCurveAtTime(this.imag, this.context.currentTime, 1);//изменение Gain по кривой из значений массива(array[value], startTime, duration )
+    //this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + time);// экспоненциальное изменение значения Gain (value, endTime)
+    //this.oscillator.stop(this.context.currentTime + time);
+  }
+ 
+}
+let context = new (window.AudioContext || window.webkitAudioContext)();
+
+//кнопка С note= freq          
+function playSound(note,utime,type) {
+  if(type > 4) {
+		playSoundT(note,utime,type);}
+	else {
+  let sound = new Sound(context);
+  let value = note;//note.dataset.frequency;
+  let time = utime*(space/1000);//-0.05;//2;//- 0.1;
+		sound.play(value,time,type);
+  //console.log(time);
+	}
+  //let type = 'triangle';
+//setTimeout( 
+//  function() {
+      //sound.stop(utime);//0.2);
+//    console.log(1);
+//  },
+//  (utime*1000)/2
+//  );
+ 
+} 
+//end simple player oscillator  
+
+  function TimePlus() {
+    lenList+= qwOct;
+    for(let u = 0;u<qwOct;u++) {
+      for(let i =0;i<sameTimeNote*3;i++) {
+        startList.push(0);
+      //console.log(i);
+      }
+    }
+  }
+	function TimeMinus() {
+    startList.splice(-nKeys*3*qwOct,nKeys*3*qwOct);
+		lenList-= qwOct;
+  }
+	function Clear(){
+		startList.length = 0;
+		    for(let i=0;i<lenList; i++) {
+      for(let j=0;j< sameTimeNote;j++) {
+        startList.push(0,0,0);
+      }
+    }  
+	}
+	
+		function Random1(n,ii) {
+    let lenListRan = 0;// sumLenNote = 0;
+		let startG = false;	
+		let n1 = 0;	
+    let lenNoteArr = [8, 4,4, 2,2,2, 1,1,1,1,1];//[16, 8,8, 4,4,4, 2,2,2,2,2];// ss = [250,500,500, 1000,250,250,125,125,125,125,125];
+        while(lenListRan < lenList-1){//for(var i=0;i<16;i++){
+            let l1 = Math.floor(Math.random() * lenNoteArr.length);
+    if(startG === false) {
+        n1 = Math.floor(Math.random() * numsNote+33);
+    }else 
+        if(n1 <= 36) {
+        n1 += floor(random(4, 8));   //3,6
+    }else if(n1 <= 39) {
+        n1 += floor(random(3, 6));   //2,5
+    }else if(n1 >= numsNote+27){
+        n1 -= floor(random(3, 6));   //2,5
+    }else if(n1 >= numsNote+30){
+        n1 -= floor(random(4, 8));   //3,6
+    }else{n1 += floor(random(-6, 6))};//-4,4
+    
+    startG = true;
+    
+			startList.splice(lenListRan*3*n +(ii*3),3,n1,lenNoteArr[l1],ii+1);
+    
+    lenListRan += lenNoteArr[l1];
+        }
+    }
+  function Record() {
+
+    json = {};
+        json.name = inp.value;
+        json.speed = tempo;
+        json.tracks = sameTimeNote;
+        json.type = typeNoteM;
+        json.mus = startList; 
+		    json.lenList = lenList;
+				
+//        save(json, 'musOsc'+ '.json',true);
+        save(json, 'i' + inp.value + '.json',true);
+  }
+function DelSelection() {
+  for(let i = 0;i<selArr.length;i+=4){
+		for(let j = 0;j<sameTimeNote;j++){
+			console.log(startList[selArr[i]*3*sameTimeNote+j*3],selArr[i+1]);
+			if(startList[selArr[i]*3*sameTimeNote+j*3] == selArr[i+1]){
+				 startList.splice(selArr[i]*3*sameTimeNote+j*3,3,0,0,0);
+				 }
+		}
+	}
+} 
+
+  
+//  Суб-контр	Контр  Большая  Малая	  1	     2	      3	      4       5       6	     7
+//C   16.352   32.703  65.406  130.81  261.63  523.25  1046.5  2093.0  4186.0  8372.0  16744.0 
+//C#  17.324   34.648  69.296  138.59  277.18  554.37  1108.7  2217.5  4434.9  8869.8  17739.7 
+//D   18.354   36.708  73.416  146.83  293.66  587.33  1174.7  2349.3  4698.6  9397.3  18794.5 
+//D#  19.445   38.891  77.782  155.56  311.13  622.25  1244.5  2489.0  4978.0  9956.1  19912.1 
+//E   20.602   41.203  82.407  164.81  329.63  659.26  1318.5  2637.0  5274.0  10548   21096.2 
+//F   21.827   43.654  87.307  174.61  349.23  698.46  1396.9  2793.8  5587.7  11175   22350.6 
+//F#  23.125   46.249  92.499  185.00  369.99  739.99  1480.0  2960.0  5919.9  11840   23679.6 
+//G   24.500   48.999  97.999  196.00  392.00  783.99  1568.0  3136.0  6271.9  12544   25087.7 
+//G#  25.957   51.913  103.83  207.65  415.30  830.61  1661.2  3322.4  6644.9  13290   26579.5 
+//A   27.500   55.000  110.00  220.00  440.00  880.00  1760.0  3520.0  7040.0  14080   28160.0 
+//A#  29.135   58.270  116.54  233.08  466.16  932.33  1864.7  3729.3  7458.6  14917   29834.5 
+//B   30.868   61.735  123.47  246.94  493.88  987.77  1975.5  3951.1  7902.1  15804   31608.5 
+
+	for(let i = 0;i<cType.length-1;i++) {
+		pan[0].children[4].children[i].style.background = cType[i+1];
+		pan[0].children[4].children[i].textContent = typeNote[typeNoteM[i+1]];
+	}
+	function Pan50(n) {
+		if(typeNoteM[n] < 6) {typeNoteM[n] += 1;}
+		else {typeNoteM[n] = 0;}
+		
+		pan[0].children[4].children[n-1].textContent = typeNote[typeNoteM[n]];
+	}
+	
+	function Pan60() {
+		if(!playing) {playing = true; 
+			pan[0].children[5].children[0].innerText ='∎';
+		}else {playing = false;iL=0; 
+			pan[0].children[5].children[0].innerText ='▶';}
+	}
+	function Pan61() {
+		if(sameTimeNote < 6) { 
+        sameTimeNote++;				
+        for(let s = lenList;s > 0;s--) {
+          startList.splice(s*3*(sameTimeNote-1),0, 0,0,0);
+        }
+      }
+      else {sameTimeNote = 6;}
+			pan[0].children[5].children[1].innerText = 'TRACKS = '+ sameTimeNote;
+	}
+	function Pan62() {
+		if(sameTimeNote >= 2) {
+        sameTimeNote--;
+			
+        for(let s = 0;s < lenList;s++) {
+          startList.splice(s*3*sameTimeNote +(sameTimeNote*3),3);
+        }
+      }
+      else {sameTimeNote = 1;}  
+      pan[0].children[5].children[1].innerText = 'TRACKS = '+ sameTimeNote;
+	}
+	
+  var button1,button2,button3,button4,button5,button6,button7,button8,button9;
+  var slider,input1;
+  var sly1,sly2,sly3,sly4,div1,div2;  
+	
+let lenList = 96; 
+let iW,iH;let xList = 30,yList = 40,numsNote = 63; 
+let startList = []; 
+let selXY = false,sel = false,sx=0,sy=0,selArr = [],arr = [],arr1 = [];	
+	
+  let sameTimeNote = 2;
+  let nKeys = sameTimeNote;
+let diezList = [0,1,0,1,0,1,0,0,1,0,1,0];//,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0]  
+  
+  function preload(l=0) {
+    if(l == 1 ) musosc1 = loadJSON('i_holms_i_vatson.json');
+  }
+		function loadList(){
+//		preload(l);
+			startList = musosc1.mus;
+		sameTimeNote = musosc1.tracks;
+		lenList = musosc1.lenList;
+		typeNoteM = musosc1.type;
+		inp.value = musosc1.name;
+			pan[0].children[5].children[1].innerText = 'TRACKS = '+ sameTimeNote;
+		for(let i = 1;i<7;i++) {
+			pan[0].children[4].children[i-1].textContent = typeNote[typeNoteM[i]];
+		}
+		}
+  function setup() {
+    createCanvas(innerWidth, innerHeight * 0.9);
+    iH = floor(innerHeight/74);
+    iW = floor(innerWidth/100);
+		
+		pan[0].children[1].children[0].value = iW;//scaleX value
+		pan[0].children[1].children[1].value = iH;//scaleY value
+
+
+    for(let i=0;i<lenList; i++) {
+      for(let j=0;j< sameTimeNote;j++) {
+        startList.push(0,0,0);
+      }
+    }    
+                                                            //IMPORT JSON //		
+  }
+  function draw() {
+    background(156); 
+		
+    
+  qwOct = pan[0].children[0].children[5].valueAsNumber;//sly1.value();
+	pan[0].children[0].children[3].textContent = '-'+ qwOct +'-';	
+    //iW = sly3.value();
+    //iH = sly4.value();
+  iW = pan[0].children[1].children[0].valueAsNumber; //scaleX change
+	iH = pan[0].children[1].children[1].valueAsNumber;  //scaleY change
+	xList = -pan[0].children[1].children[2].value + 30;	
+
+		for(let l=0;l<numsNote;l++) {      
+        push();
+        noStroke();
+        if(diezList[l%12] == 0) {
+          fill(200);
+        rect(xList + 0,yList + l*iH,iW*lenList,iH);  
+        }else {
+          fill(100);
+        rect(xList + 0,yList + l*iH,iW*lenList,iH);
+        }       
+        pop();
+    }
+//vertical line split bites    
+    for(let i=0;i<lenList;i++) {
+      push();
+      line(xList + i*iW,yList + 0,xList + i*iW,yList + numsNote*iH);
+      pop();
+    }
+//vertical red line
+    push();
+    strokeWeight(3);
+    stroke(255,0,0);
+    line(xList + iL/3/sameTimeNote*iW,yList + 0,xList + iL/3/sameTimeNote*iW,yList + 60*iH);
+    //if(xList + iL/3/sameTimeNote*iW > width) pan[0].children[1].children[2].value += 300;//xList -= 300; //move screen >
+		//else if(xList + iL/3/sameTimeNote*iW < 0) xList = 30;      //remove screen
+		pop();
+//rect split octave/quarter    
+    for(let o=0;o<lenList-qwOct+1;o+=qwOct) {
+      for(let h=0;h<60;h+=12) {      
+      push();
+      stroke(250);
+      noFill();
+      rect(xList + o*iW,yList + h*iH,qwOct*iW,12*iH);
+      pop();
+      }
+    }
+//show note List    
+    for(let i=0;i<lenList; i++) {
+      for(let j=0;j< sameTimeNote;j++) {
+        let numArrN = i*sameTimeNote*3+j*3;
+        let color = startList[numArrN+2];
+        if(startList[numArrN] !== 0) {
+        fill(cType[color]);
+        rect(xList + i*iW,yList + (95-startList[numArrN])*iH,iW*startList[numArrN+1],iH-j,4);//note +j
+          
+          //console.log(i+j*3);
+        }
+      }
+    }
+//                                      Playing list
+tempo = pan[0].children[0].children[2].valueAsNumber;
+space = floor(60/tempo/8*1000);    
+pan[0].children[0].children[0].textContent = '<'+tempo*8+' BpM >';		
+  if(playing && timer < Date.now()) {
+          for(let j= 0;j<3*sameTimeNote;) {
+            if(startList[iL] !== 0 && typeNoteM[startList[iL+2]] !== 0) {
+              let freq = 440 * Math.pow(2, (startList[iL]-69) / 12);
+              playSound(freq,startList[iL+1],typeNoteM[startList[iL+2]]);//увелич. длина ноты
+							//console.log(startList[iL+2]);
+            }
+          j+=3;    
+          iL+=3;
+            //console.log(iL);
+          }
+    //console.log(timer);    
+        timer = Date.now() + space;// 125
+        if(iL == startList.length) {iL = 0;pan[0].children[1].children[2].value = 0;}
+      }    
+    fill(cType[typeShow]);
+//    rect( floor(mouseX/iW)*iW, floor(mouseY/iH)*iH,iW*lenNote,iH);
+    rect( floor(mouseX), floor(mouseY),iW*lenNote,iH);
+    //text('temp: '+ tempo +'/'+space,0,innerHeight-50);
+	if(sel){
+		let c = color(0, 126, 255, 102);
+		let selA;// = false;
+		if ( mouseIsPressed && mouseX < lenList*iW+xList && mouseY < numsNote*iH+yList && mouseX > xList && mouseY > yList) {
+			if(selXY == false) {
+			sx = mouseX;
+		  sy = mouseY;
+				selArr.length = 0;
+			}
+			selXY = true;
+fill(c);		
+rect(sx, sy, mouseX-sx, mouseY-sy);
+			 arr = [sx, sy, mouseX-sx, mouseY-sy];
+			 arr1 = [sx, sy, mouseX-sx, mouseY-sy];
+		  } else {
+			//console.log(arr);
+				if(arr.length > 0){
+					if(arr1[2] < 0){arr[0] = arr1[0]+arr1[2];arr[2] = -arr1[2];}
+					if(arr1[3] < 0){arr[1] = arr1[1]+arr1[3];arr[3] = -arr1[3];}
+					let maxFreq = 95 - floor((arr[1]-yList) / iH);
+					let minFreq = maxFreq - floor(arr[3] / iH);
+					let minNumArr = floor((arr[0]-xList) / iW)*sameTimeNote*3;
+					let maxNumArr = minNumArr + floor(arr[2] / iW)*sameTimeNote*3+1;
+//					console.log(maxFreq,minFreq,minNumArr,maxNumArr);
+//					console.log(maxFreq,minFreq,minNumArr*sameTimeNote*3,maxNumArr*sameTimeNote*3);
+					for(let i = minNumArr;i<maxNumArr;i+=3){
+						if(startList[i] >= minFreq && startList[i] <= maxFreq)
+					 selArr.push(floor(i/sameTimeNote/3),startList[i],startList[i+1],startList[i+2]);
+					}
+					arr.length = 0;
+					arr1.length = 0;
+					console.log(selArr);
+					}
+			selXY = false;
+				for(let k = 0;k<selArr.length;k+=4){
+					fill(c);
+					rect(xList + selArr[k]*iW,yList + (95-selArr[k+1])*iH,iW*selArr[k+2],iH,4);//show selection notes
+				}
+  }	}
+  }
+  
+  function mouseReleased() {
+    if( mouseX < lenList*iW+xList && mouseY < numsNote*iH+yList && mouseX > xList && mouseY > yList) {
+//    let numArr = floor(mouseX / iW) * 60 * 3  + floor(mouseY / iH) * 3; 
+    let numArr = floor((mouseX-xList) / iW) * sameTimeNote * 3;//  + floor(mouseY / iH) * 3; 
+    let freqNote = 95 - floor((mouseY-yList) / iH);
+    console.log(numArr,freqNote);
+      
+      for(let t = 0;t < sameTimeNote * 3;t += 3) {
+        if(typeShow !== 0 && startList[numArr+t] == 0 && !sel) {
+          startList.splice(numArr+t,3,freqNote,lenNote,typeShow);  
+          t = sameTimeNote*3;
+        //console.log(mouseX,mouseY);
+        }
+        if(typeShow == 0 && startList[numArr+t]==freqNote) startList.splice(numArr+t,3,0,0,0);  //if typeShow == 0 (del)  
+      }
+//play sound on click			
+			let freq = 440 * Math.pow(2, (freqNote-69) / 12);
+			playSound(freq,lenNote,typeNoteM[typeShow]);
+    }
+}
+  //increase and decrease note length
+  function mouseWheel(event) {
+  print(event.delta);
+  lenNote += event.delta/100;
+  if(lenNote < 1) lenNote = 1;  
+  
+}
+          window.addEventListener( 'keydown', function( event ) {
+				switch ( event.ctrlKey && event.keyCode ) {
+					// Q 81, 87 69 82 //37 38 39 40 стрелки
+					// A 65, 83 68 70
+                    // Z 90, 88 67 86
+				case 37:						            
+          if(xList <= 30) xList += 50;
+          else xList = 30;          
+				break;
+				case 39:
+		xList -= 50;				
+				break;
+        case 38:						            
+          if(typeShow < 6) typeShow++;
+          else typeShow = 0;    
+				break;
+				case 40:
+          if(typeShow > 0) typeShow--;
+          else typeShow = 6;
+    	  break;    
+				case 32:						            
+          Pan60();           
+				break;
+                  
+				}
+			}, false );  
+</script>    
+</body>
+</html>
