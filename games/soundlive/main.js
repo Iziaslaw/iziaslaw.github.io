@@ -18,17 +18,17 @@ var cursor;var cursorTw;
 
 function preload() {
 
-    game.load.image('city', 'image/music/castle.jpg');
-    //game.load.image('boy', 'image/music/boy_with_flute.png');
+    game.load.image('city', 'images/castle.jpg');
+    game.load.image('boy', 'images/boy_with_flute.png');
     //game.load.spritesheet('stone', 'image/stones.png', 150, 110);
-    //game.load.spritesheet('notes', 'image/music/note_50_100.png', 50, 100);
+    game.load.spritesheet('notes', 'images/note_50_100.png', 50, 100);
     //game.load.audio('org', 'audio/church_organ04_c3_b5.ogg');
     //game.load.audio('flu', 'audio/flute_c3_b5.ogg');
-    game.load.audio('piano', 'https://iziaslaw.github.io/games/soundgame/audio/piano_c3-c5.mp3');
+    game.load.audio('piano', '../soundgame/audio/piano_c3-c5.mp3');
     game.load.audio('beat', 'audio/beat_fl_2.mp3');
-    //game.load.audio('bass', 'audio/choir_ooh_fl.wav');
-    //game.load.image('flame', 'image/flame_camin.png');
-    //game.load.spritesheet('rain', 'assets/sprites/rain.png', 17, 17);
+    game.load.audio('bass', 'audio/choir_ooh_fl.ogg');
+    game.load.image('flame', 'images/flame_camin.png');
+    game.load.spritesheet('rain', 'images/rain.png', 17, 17);
     game.load.spritesheet('button', 'images/buttons3_1_mystic.png', 80, 20);
 
 }
@@ -125,6 +125,55 @@ var board = [
     cursor = game.add.sprite(fW, fH * 37, 'cursor');
     
     
+        
+game.physics.startSystem(Phaser.Physics.ARCADE);
+    
+    var margin = 50;
+  // and set the world's bounds according to the given margin
+  var x = -margin;
+  var y = -margin;
+  var w = game.world.width + margin * 2;
+  var h = game.world.height + margin * 2;
+  // it's not necessary to increase height, we do it to keep uniformity
+  game.world.setBounds(x, y, w, h);
+  
+  // we make sure camera is at position (0,0)
+  game.world.camera.position.set(0);
+  
+  // include some props on the scene
+  city = game.add.tileSprite(x, y, w, h, 'city');
+  //city.scale.set(0.9);
+  boy = game.add.sprite(930, 280, 'boy', 0);
+    boy.scale.set(0.7);
+    boy.alpha = 0.6;
+//emitter2 искры камина
+    emitter = game.add.emitter(350, 500, 200);
+    emitter.makeParticles('flame');
+
+    emitter.setRotation(0, 0);
+    emitter.setAlpha(0.2, 0.6);
+    emitter.setScale(0.5, 1);
+    emitter.gravity = -200;
+    emitter.start(false, 1500, 100);
+    
+    emitter2 = game.add.emitter(1050, 0, 400);
+
+	emitter2.width = game.world.width / 4;
+	// emitter.angle = 30; // uncomment to set an angle for the rain.
+
+	emitter2.makeParticles('rain');
+
+	emitter2.minParticleScale = 0.1;
+	emitter2.maxParticleScale = 0.5;
+
+	emitter2.setYSpeed(500, 700);
+	emitter2.setXSpeed(-100, -90);
+
+	emitter2.minRotation = 0;
+	emitter2.maxRotation = 0;
+
+	emitter2.start(false, 1600, 5, 0);          //    
+   
 button1 = game.add.button(0, 720, 'button', but1, this, 0, 1, 2);
     button1.name = 'pic2';
     button1.anchor.setTo(0, 1.0);
@@ -174,29 +223,6 @@ button1 = game.add.button(0, 720, 'button', but1, this, 0, 1, 2);
     tb6 = game.add.text(button6.x + 10, button6.y - 40, soundName2, { font: "25px mv boli", fill: "#5c18c7", align: "center" });
     tb7 = game.add.text(button7.x + 10, button7.y - 40, long, { font: "25px mv boli", fill: "#5c18c7", align: "center" });
     tb8 = game.add.text(button8.x + 10, button8.y - 40, "", { font: "25px mv boli", fill: "#5c18c7", align: "center" });
-        
-game.physics.startSystem(Phaser.Physics.ARCADE);
-    
-    var margin = 50;
-  // and set the world's bounds according to the given margin
-  var x = -margin;
-  var y = -margin;
-  var w = game.world.width + margin * 2;
-  var h = game.world.height + margin * 2;
-  // it's not necessary to increase height, we do it to keep uniformity
-  game.world.setBounds(x, y, w, h);
-  
-  // we make sure camera is at position (0,0)
-  game.world.camera.position.set(0);
-  
-  // include some props on the scene
-  //city = game.add.tileSprite(x, y, w, h, 'city');
-    //city.scale.set(0.9);
-  boy = game.add.sprite(930, 280, 'boy', 0);
-    boy.scale.set(0.7);
-    boy.alpha = 0.6;
-    
-   
     
     beat = game.add.audio('beat');
     beat.allowMultiple = true;
@@ -276,19 +302,19 @@ function dropPiano () {
     start = true;
     
     
-//    emitter = game.add.emitter(20 + (pp * 5), 580 - pp, 250);//(game.world.centerX,game.world.centerY, 200);//(0 + (pp *2), 300 + pp, 250);
-//
-//    emitter.makeParticles('notes', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14], 100, true, true);
-//    
-//    emitter.minParticleScale = 0.5;
-//    emitter.maxParticleScale = 1.0;
-//    emitter.minParticleSpeed.setTo(-200, -300);
-//    emitter.maxParticleSpeed.setTo(200, -400);
-//    emitter.gravity = 150;
-//    emitter.bounce.setTo(0.5, 0.5);
-//    emitter.angularDrag = 30;
-//
-//    emitter.start(true, 4000,null, 1);//(true, 4000, null, 1);
+emitter = game.add.emitter(20 + (pp * 5), 580 - pp, 250);//(game.world.centerX,game.world.centerY, 200);//(0 + (pp *2), 300 + pp, 250);
+
+    emitter.makeParticles('notes', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14], 100, true, true);
+    
+    emitter.minParticleScale = 0.5;
+    emitter.maxParticleScale = 1.0;
+    emitter.minParticleSpeed.setTo(-200, -300);
+    emitter.maxParticleSpeed.setTo(200, -400);
+    emitter.gravity = 150;
+    emitter.bounce.setTo(0.5, 0.5);
+    emitter.angularDrag = 30;
+
+    emitter.start(true, 4000,null, 1);//(true, 4000, null, 1);
     
     total1++;
     timer1 = game.time.now + ss[s];//скорость
@@ -454,7 +480,7 @@ function dropBeat() {
                       
     }
     function but4() {
-        if(start1 === true){
+        if(start1 == true){
         note.destroy();
         note1.destroy();            
         lineX.destroy();

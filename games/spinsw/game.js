@@ -35,7 +35,7 @@ var score = 0;
 var scoreS = 0;        
 var scoreString = '';
 var scoreStringS = '';        
-var scoreText;
+var scoreText, startText;
 var scoreTextS;        
 var lives, livesS;
 var enemyBullet;
@@ -68,10 +68,20 @@ function create() {
     //  The scrolling starfield background
     starfield = game.add.sprite(0, 0, 'starfield');
     starfield.name = starfield;
+	startText = game.add.text(game.world.centerX,150,' ', { font: '30px Arial Black', fill: 'rgba(6, 27, 42, 0.84)' });
+    startText.anchor.setTo(0.5, 0.5);
+    //startText.visible = false;
+    startText.stroke = "rgba(135, 203, 67, 0.83)";
+    startText.strokeThickness = 16;
+    startText.setShadow(2, 2, "#d5db32", 2, true, false);
+    startText.align = 'center';
+	startText.text = " Управление: \n вправо,влево, левая кнопка мыши, правая кнопка мыши\n СТАРТ";
+        //stateText.visible = true;
 
     logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
     logo.anchor.setTo(0.5);
     logo.scale.setTo(0.01);
+	
     game.add.tween(logo.scale).to( { x: 1, y: 1 }, 10000, Phaser.Easing.Linear.None, true, 1, 1000, true);
     game.add.tween(logo).to( { angle: 1440 }, 10000, Phaser.Easing.Linear.None, true, 500, 1000, true);
     //logo.fixedToCamera = true;
@@ -153,6 +163,7 @@ function removeLogo () {
 
     game.input.onDown.remove(removeLogo, this);
     logo.kill();
+	startText.kill();
     
     music.play();
     createAliens();

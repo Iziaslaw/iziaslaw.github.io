@@ -27,18 +27,18 @@ var totalBass = 0;
 
 function preload() {
 
-    game.load.image('city', 'image/music/castle.jpg');
-    game.load.image('boy', 'image/music/boy_with_flute.png');
-    game.load.spritesheet('stone', 'image/stones.png', 150, 110);
-    game.load.spritesheet('notes', 'image/music/note_50_100.png', 50, 100);
-    game.load.audio('org', 'audio/church_organ04_c3_b5.ogg');
-    game.load.audio('flu', 'audio/flute_c3_b5.ogg');
-    game.load.audio('piano', 'audio/piano_c3-c5.ogg');
-    game.load.audio('beat', 'audio/beat_fl1.wav');
-    game.load.audio('bass', 'audio/choir_ooh_fl.wav');
-    game.load.image('flame', 'image/flame_camin.png');
-    game.load.spritesheet('rain', 'assets/sprites/rain.png', 17, 17);
-    game.load.spritesheet('button', 'image/buttons3_1_mystic.png', 80, 20);
+    game.load.image('city', 'images/castle.jpg');
+    game.load.image('boy', 'images/boy_with_flute.png');
+    //game.load.spritesheet('stone', 'image/stones.png', 150, 110);
+    game.load.spritesheet('notes', 'images/note_50_100.png', 50, 100);
+    //game.load.audio('org', 'audio/church_organ04_c3_b5.ogg');
+    //game.load.audio('flu', 'audio/flute_c3_b5.ogg');
+    game.load.audio('piano', '../soundgame/audio/piano_c3-c5.mp3');
+    game.load.audio('beat', 'audio/beat_fl_2.mp3');
+    game.load.audio('bass', 'audio/choir_ooh_fl.ogg');
+    game.load.image('flame', 'images/flame_camin.png');
+    game.load.spritesheet('rain', 'images/rain.png', 17, 17);
+    game.load.spritesheet('button', 'images/buttons3_1_mystic.png', 80, 20);
 
 }
     var pp; // = Math.floor(Math.random() * 38);
@@ -105,6 +105,12 @@ game.stage.backgroundColor = '#58225a';
 
         y += 6;
     }
+  // include some props on the scene
+  city = game.add.tileSprite(x, y, w, h, 'city');
+    city.scale.set(0.9);
+  boy = game.add.sprite(930, 280, 'boy', 0);
+    boy.scale.set(0.7);
+    boy.alpha = 0.6;
     
 button1 = game.add.button(0, 720, 'button', but1, this, 0, 1, 2);
     button1.name = 'pic2';
@@ -170,12 +176,6 @@ game.physics.startSystem(Phaser.Physics.ARCADE);
   // we make sure camera is at position (0,0)
   game.world.camera.position.set(0);
   
-  // include some props on the scene
-  //city = game.add.tileSprite(x, y, w, h, 'city');
-    //city.scale.set(0.9);
-  boy = game.add.sprite(930, 280, 'boy', 0);
-    boy.scale.set(0.7);
-    boy.alpha = 0.6;
     
    //emitter2 искры камина
     emitter = game.add.emitter(350, 500, 200);
